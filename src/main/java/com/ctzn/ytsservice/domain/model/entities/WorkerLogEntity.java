@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.domain.entity;
+package com.ctzn.ytsservice.domain.model.entities;
 
 
 import lombok.*;

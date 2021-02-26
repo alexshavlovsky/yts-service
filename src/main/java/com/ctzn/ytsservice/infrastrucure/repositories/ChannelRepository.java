@@ -1,6 +1,6 @@
-package com.ctzn.ytsservice.repository;
+package com.ctzn.ytsservice.infrastrucure.repositories;
 
-import com.ctzn.ytsservice.domain.entity.ChannelEntity;
+import com.ctzn.ytsservice.domain.model.entities.ChannelEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

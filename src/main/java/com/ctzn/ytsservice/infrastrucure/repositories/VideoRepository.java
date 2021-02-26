@@ -1,6 +1,6 @@
-package com.ctzn.ytsservice.repository;
+package com.ctzn.ytsservice.infrastrucure.repositories;
 
-import com.ctzn.ytsservice.domain.entity.VideoEntity;
+import com.ctzn.ytsservice.domain.model.entities.VideoEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

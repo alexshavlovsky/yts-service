@@ -35,4 +35,12 @@ public class CommentEntity {
     //    List<CommentEntity> replies;
     public Date createdDate;
     public Date lastUpdatedDate;
+
+    public String getVideoId() {
+        return video.getVideoId();
+    }
+
+    public String getParentId() {
+        return parent == null ? null : parent.getCommentId();
+    }
 }

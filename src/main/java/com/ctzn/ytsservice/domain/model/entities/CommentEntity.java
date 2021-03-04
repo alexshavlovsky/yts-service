@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ public class CommentEntity {
     @Id
     @EqualsAndHashCode.Include
     public String commentId;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_id")
     public VideoEntity video;
     public String authorText;
@@ -28,19 +29,19 @@ public class CommentEntity {
     public String text;
     public int likeCount;
     public int replyCount;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     public CommentEntity parent;
-    //    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    //    List<CommentEntity> replies;
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    List<CommentEntity> replies;
     public Date createdDate;
     public Date lastUpdatedDate;
 
-    public String getVideoId() {
+    public String getVideo() {
         return video.getVideoId();
     }
 
-    public String getParentId() {
+    public String getParent() {
         return parent == null ? null : parent.getCommentId();
     }
 }

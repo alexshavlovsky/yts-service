@@ -2,6 +2,7 @@ package com.ctzn.ytsservice.domain.model.entities;
 
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -26,6 +27,7 @@ public class CommentEntity {
     public String channelId;
     public String publishedTimeText;
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     public String text;
     public int likeCount;
     public int replyCount;

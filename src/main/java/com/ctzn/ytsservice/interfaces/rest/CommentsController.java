@@ -8,26 +8,18 @@ import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
 import org.hibernate.SessionFactory;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.hibernate.persister.entity.AbstractEntityPersister;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.datasource.init.ScriptException;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -41,29 +33,29 @@ public class CommentsController {
         this.domainMapper = domainMapper;
     }
 
-    @Autowired
-    private DataSource dataSource;
-
-    @PostConstruct
-    public void runNativeSql() {
-        ClassPathResource resource = new ClassPathResource("full_text_init.sql");
-        try (Connection connection = dataSource.getConnection()) {
-            ScriptUtils.executeSqlScript(connection, resource);
-        } catch (SQLException | ScriptException e) {
-            e.printStackTrace();
-        }
-    }
+//    Native SQL runner
+//    @Autowired
+//    private DataSource dataSource;
+//
+//    @PostConstruct
+//    public void runNativeSql() {
+//        ClassPathResource resource = new ClassPathResource("full_text_init_h2db.sql");
+//        try (Connection connection = dataSource.getConnection()) {
+//            ScriptUtils.executeSqlScript(connection, resource);
+//        } catch (SQLException | ScriptException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @GetMapping()
     public ResponseEntity<PagedResponse<CommentResponse>> findByTextContaining(@RequestParam(value = "text", required = false) String text, Pageable pageable) {
         Page<CommentEntity> page = text == null || text.isEmpty() || text.isBlank() ?
                 // if filtering query param is missing, disable sorting to improve performance
                 commentRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize())) :
-                text.length() < 10 ?
-                        // full text search by key words
-                        commentRepository.find(text, adaptSortColumnNames(pageable)) :
-                        // true full text search by key words
-                        commentRepository.findAllByTextContainingIgnoreCase(text, pageable);
+                // native full text search
+                commentRepository.nativeFts(text, adaptSortColumnNames(pageable));
+//                // true full text look up
+//                commentRepository.findAllByTextContainingIgnoreCase(text, pageable)
         return ResponseEntity.ok().body(domainMapper.fromPageToPagedResponse(page));
     }
 
@@ -84,12 +76,6 @@ public class CommentsController {
             return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), adaptedSort);
         }
         return pageable;
-    }
-
-    @GetMapping("/fts")
-    public ResponseEntity<PagedResponse<CommentResponse>> findByTextContainingFts(@RequestParam(value = "text", required = false) String text, Pageable pageable) {
-        Page<CommentEntity> page = commentRepository.find(text, adaptSortColumnNames(pageable));
-        return ResponseEntity.ok().body(domainMapper.fromPageToPagedResponse(page));
     }
 
 }

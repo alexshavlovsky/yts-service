@@ -2,6 +2,7 @@ package com.ctzn.ytsservice.domain.model.entities;
 
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,5 +26,6 @@ public class WorkerLogEntity {
     private String status;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String message;
 }

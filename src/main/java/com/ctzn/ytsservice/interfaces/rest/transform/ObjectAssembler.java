@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.interfaces.rest.transform;
 
-import com.ctzn.ytsservice.domain.model.entities.CommentEntity;
+import com.ctzn.ytsservice.domain.entity.CommentEntity;
 import com.ctzn.ytsservice.interfaces.rest.dto.CommentResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
 import org.modelmapper.ModelMapper;
@@ -39,7 +39,8 @@ public class ObjectAssembler {
     }
 
     // GENERIC TYPE TOKENS
-    private static final Type PAGED_COMMENT_RESPONSE = new TypeToken<PagedResponse<CommentResponse>>(){}.getType();
+    private static final Type PAGED_COMMENT_RESPONSE = new TypeToken<PagedResponse<CommentResponse>>() {
+    }.getType();
 
     // GENERIC MAPPERS
     public PagedResponse<CommentResponse> fromPageToPagedResponse(Page<CommentEntity> page) {

@@ -1,5 +1,4 @@
-package com.ctzn.ytsservice.domain.model.entities;
-
+package com.ctzn.ytsservice.domain.entity;
 
 import lombok.*;
 import org.hibernate.annotations.Type;

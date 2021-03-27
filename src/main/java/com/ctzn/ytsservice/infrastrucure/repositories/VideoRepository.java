@@ -1,9 +1,9 @@
 package com.ctzn.ytsservice.infrastrucure.repositories;
 
-import com.ctzn.ytsservice.domain.model.entities.VideoEntity;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import com.ctzn.ytsservice.domain.entity.VideoEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VideoRepository extends PagingAndSortingRepository<VideoEntity, String> {
+public interface VideoRepository extends JpaRepository<VideoEntity, String> {
 }

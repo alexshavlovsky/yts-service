@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.interfaces.rest;
 
-import com.ctzn.ytsservice.domain.model.entities.CommentEntity;
+import com.ctzn.ytsservice.domain.entity.CommentEntity;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
 import com.ctzn.ytsservice.interfaces.rest.dto.CommentResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;

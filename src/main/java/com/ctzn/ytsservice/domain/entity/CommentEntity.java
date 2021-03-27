@@ -1,13 +1,11 @@
 package com.ctzn.ytsservice.domain.entity;
 
 import com.ctzn.youtubescraper.model.comments.CommentDTO;
-import com.ctzn.youtubescraper.persistence.sessionfactory.TimeStamped;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +13,10 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "comments")
-public class CommentEntity implements TimeStamped {
+public class CommentEntity extends Auditable {
     @Id
     @EqualsAndHashCode.Include
     public String commentId;
@@ -36,10 +34,8 @@ public class CommentEntity implements TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     public CommentEntity parent;
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent")
     List<CommentEntity> replies;
-    public Date createdDate;
-    public Date lastUpdatedDate;
 
     public static CommentEntity fromCommentDTO(CommentDTO dto, Map<String, VideoEntity> videoEntityMap, Map<String, CommentEntity> commentEntityMap) {
         return new CommentEntity(
@@ -52,9 +48,7 @@ public class CommentEntity implements TimeStamped {
                 dto.getLikeCount(),
                 dto.getReplyCount(),
                 dto.getParentCommentId() == null || commentEntityMap == null ? null : commentEntityMap.get(dto.getParentCommentId()),
-                Collections.emptyList(),
-                null,
-                null
+                Collections.emptyList()
         );
     }
 }

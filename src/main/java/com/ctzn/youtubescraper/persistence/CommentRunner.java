@@ -1,4 +1,4 @@
-package com.ctzn.youtubescraper.persistence.runner;
+package com.ctzn.youtubescraper.persistence;
 
 import com.ctzn.youtubescraper.exception.ScraperException;
 import com.ctzn.youtubescraper.exception.ScrapperInterruptedException;

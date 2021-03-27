@@ -1,22 +1,21 @@
 package com.ctzn.ytsservice.domain.entity;
 
 import com.ctzn.youtubescraper.model.channelvideos.VideoDTO;
-import com.ctzn.youtubescraper.persistence.sessionfactory.TimeStamped;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "videos")
-public class VideoEntity implements TimeStamped {
+public class VideoEntity extends Auditable {
     @Id
     @EqualsAndHashCode.Include
     String videoId;
@@ -26,10 +25,8 @@ public class VideoEntity implements TimeStamped {
     String title;
     String publishedTimeText;
     int viewCountText;
-    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "video")
     List<CommentEntity> comments;
-    public Date createdDate;
-    public Date lastUpdatedDate;
 
     public static VideoEntity fromVideoDTO(VideoDTO dto, ChannelEntity channel) {
         return new VideoEntity(
@@ -38,9 +35,7 @@ public class VideoEntity implements TimeStamped {
                 dto.getTitle(),
                 dto.getPublishedTimeText(),
                 dto.getViewCountText(),
-                Collections.emptyList(),
-                null,
-                null
+                Collections.emptyList()
         );
     }
 }

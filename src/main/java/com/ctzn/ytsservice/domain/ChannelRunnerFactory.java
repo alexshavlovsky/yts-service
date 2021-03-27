@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.domain;
 
-import com.ctzn.youtubescraper.persistence.runner.PersistenceChannelRunner;
+import com.ctzn.youtubescraper.persistence.PersistenceChannelRunner;
 import org.springframework.stereotype.Component;
 
 @Component

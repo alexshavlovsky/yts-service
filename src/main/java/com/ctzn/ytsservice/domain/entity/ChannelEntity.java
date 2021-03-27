@@ -1,22 +1,24 @@
 package com.ctzn.ytsservice.domain.entity;
 
 import com.ctzn.youtubescraper.model.channelvideos.ChannelDTO;
-import com.ctzn.youtubescraper.persistence.sessionfactory.TimeStamped;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "channels")
-public class ChannelEntity implements TimeStamped {
+public class ChannelEntity extends Auditable {
     @Id
     @EqualsAndHashCode.Include
     public String channelId;
@@ -24,10 +26,8 @@ public class ChannelEntity implements TimeStamped {
     public String title;
     public Integer videoCount;
     public Long subscriberCount;
-    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "channel")
     public List<VideoEntity> videos;
-    public Date createdDate;
-    public Date lastUpdatedDate;
 
     public static ChannelEntity fromChannelDTO(ChannelDTO dto) {
         return new ChannelEntity(
@@ -36,9 +36,7 @@ public class ChannelEntity implements TimeStamped {
                 dto.getTitle(),
                 dto.getVideoCount(),
                 dto.getSubscriberCount(),
-                Collections.emptyList(),
-                null,
-                null
+                Collections.emptyList()
         );
     }
 }

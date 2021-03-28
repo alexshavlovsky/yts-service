@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
+@ToString(exclude = "videos")
 @Table(name = "channels")
 public class ChannelEntity extends Auditable {
     @Id
@@ -27,6 +28,7 @@ public class ChannelEntity extends Auditable {
     public Long subscriberCount;
     @OneToMany(mappedBy = "channel")
     public List<VideoEntity> videos;
+    public ChannelStatus channelStatus;
 
     public static ChannelEntity fromChannelDTO(ChannelDTO dto) {
         return new ChannelEntity(
@@ -35,7 +37,21 @@ public class ChannelEntity extends Auditable {
                 dto.getTitle(),
                 dto.getVideoCount(),
                 dto.getSubscriberCount(),
-                Collections.emptyList()
+                Collections.emptyList(),
+                ChannelStatus.METADATA_FETCHED
         );
     }
+
+    public static ChannelEntity newPendingChannel(String channelId) {
+        return new ChannelEntity(
+                channelId,
+                null,
+                null,
+                null,
+                null,
+                Collections.emptyList(),
+                ChannelStatus.PENDING
+        );
+    }
+
 }

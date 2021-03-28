@@ -1,0 +1,10 @@
+### Add a channel job
+POST {{api-url}}/jobs
+Accept: application/json
+Content-Type: application/json
+
+{
+  "channelId": "UCksTNgiRyQGwi2ODBie8HdA"
+}
+
+###

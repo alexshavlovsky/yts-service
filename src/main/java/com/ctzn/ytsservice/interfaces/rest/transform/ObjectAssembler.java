@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.interfaces.rest.transform;
 
-import com.ctzn.ytsservice.domain.entity.CommentEntity;
+import com.ctzn.ytsservice.domain.scraper.entity.CommentEntity;
 import com.ctzn.ytsservice.interfaces.rest.dto.CommentResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
 import org.modelmapper.ModelMapper;

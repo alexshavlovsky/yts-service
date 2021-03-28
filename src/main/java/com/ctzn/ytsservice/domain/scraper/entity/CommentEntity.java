@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.domain.entity;
+package com.ctzn.ytsservice.domain.scraper.entity;
 
 import com.ctzn.youtubescraper.model.comments.CommentDTO;
 import lombok.*;

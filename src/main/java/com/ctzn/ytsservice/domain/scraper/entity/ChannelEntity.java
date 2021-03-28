@@ -1,8 +1,7 @@
-package com.ctzn.ytsservice.domain.entity;
+package com.ctzn.ytsservice.domain.scraper.entity;
 
 import com.ctzn.youtubescraper.model.channelvideos.ChannelDTO;
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

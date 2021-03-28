@@ -4,7 +4,7 @@ import com.ctzn.youtubescraper.config.CommentIteratorCfg;
 import com.ctzn.youtubescraper.config.CommentOrderCfg;
 import com.ctzn.youtubescraper.config.ExecutorCfg;
 import com.ctzn.youtubescraper.config.VideoIteratorCfg;
-import com.ctzn.ytsservice.domain.PersistenceService;
+import com.ctzn.ytsservice.domain.scraper.service.PersistenceService;
 
 import java.time.Duration;
 

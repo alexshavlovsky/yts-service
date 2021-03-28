@@ -1,9 +1,9 @@
-package com.ctzn.ytsservice.domain;
+package com.ctzn.ytsservice.domain.scraper.service;
 
-import com.ctzn.ytsservice.domain.entity.ChannelEntity;
-import com.ctzn.ytsservice.domain.entity.CommentEntity;
-import com.ctzn.ytsservice.domain.entity.VideoEntity;
-import com.ctzn.ytsservice.domain.entity.WorkerLogEntity;
+import com.ctzn.ytsservice.domain.scraper.entity.ChannelEntity;
+import com.ctzn.ytsservice.domain.scraper.entity.CommentEntity;
+import com.ctzn.ytsservice.domain.scraper.entity.VideoEntity;
+import com.ctzn.ytsservice.domain.scraper.entity.WorkerLogEntity;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
@@ -15,10 +15,10 @@ import java.util.List;
 @Service
 public class PersistenceService {
 
-    private ChannelRepository channelRepository;
-    private VideoRepository videoRepository;
-    private CommentRepository commentRepository;
-    private WorkerLogRepository workerLogRepository;
+    private final ChannelRepository channelRepository;
+    private final VideoRepository videoRepository;
+    private final CommentRepository commentRepository;
+    private final WorkerLogRepository workerLogRepository;
 
     public PersistenceService(ChannelRepository channelRepository, VideoRepository videoRepository, CommentRepository commentRepository, WorkerLogRepository workerLogRepository) {
         this.channelRepository = channelRepository;

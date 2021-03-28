@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.domain;
+package com.ctzn.ytsservice.domain.scraper.service;
 
 import com.ctzn.youtubescraper.persistence.PersistenceChannelRunner;
 import org.springframework.stereotype.Component;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChannelRunnerFactory {
 
-    private PersistenceService persistenceService;
+    private final PersistenceService persistenceService;
 
     public ChannelRunnerFactory(PersistenceService persistenceService) {
         this.persistenceService = persistenceService;

@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.domain.scraper.entity;
+package com.ctzn.ytsservice.domain.shared;
 
 import com.ctzn.youtubescraper.model.channelvideos.ChannelDTO;
 import lombok.*;

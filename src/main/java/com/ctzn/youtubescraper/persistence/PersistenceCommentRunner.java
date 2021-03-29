@@ -4,10 +4,9 @@ import com.ctzn.youtubescraper.config.CommentIteratorCfg;
 import com.ctzn.youtubescraper.config.CommentOrderCfg;
 import com.ctzn.youtubescraper.handler.DataCollector;
 import com.ctzn.youtubescraper.model.comments.CommentDTO;
-import com.ctzn.ytsservice.domain.scraper.entity.CommentEntity;
-import com.ctzn.ytsservice.domain.scraper.service.PersistenceService;
-import com.ctzn.ytsservice.domain.scraper.entity.VideoEntity;
-import com.ctzn.ytsservice.domain.scraper.entity.WorkerLogEntity;
+import com.ctzn.ytsservice.domain.shared.CommentEntity;
+import com.ctzn.ytsservice.domain.shared.VideoEntity;
+import com.ctzn.ytsservice.domain.shared.WorkerLogEntity;
 
 import java.util.Date;
 import java.util.List;

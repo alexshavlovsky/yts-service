@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.domain.scraper.entity;
+package com.ctzn.ytsservice.domain.shared;
 
 import lombok.*;
 import org.hibernate.annotations.Type;

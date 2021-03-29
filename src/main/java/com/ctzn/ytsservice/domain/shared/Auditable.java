@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.domain.scraper.entity;
+package com.ctzn.ytsservice.domain.shared;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

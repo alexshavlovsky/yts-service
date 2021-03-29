@@ -1,5 +1,5 @@
-### Add a channel job
-POST {{api-url}}/jobs
+### Add a pending channel
+POST {{api-url}}/channels
 Accept: application/json
 Content-Type: application/json
 

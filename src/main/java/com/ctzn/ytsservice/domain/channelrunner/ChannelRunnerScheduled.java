@@ -1,7 +1,7 @@
-package com.ctzn.ytsservice.domain.scraper.service;
+package com.ctzn.ytsservice.domain.channelrunner;
 
-import com.ctzn.ytsservice.domain.scraper.entity.ChannelEntity;
-import com.ctzn.ytsservice.domain.scraper.entity.ChannelStatus;
+import com.ctzn.ytsservice.domain.shared.ChannelEntity;
+import com.ctzn.ytsservice.domain.shared.ChannelStatus;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,12 +12,12 @@ import java.util.Optional;
 
 @Service
 @EnableScheduling
-public class ScheduledChannelRunner {
+public class ChannelRunnerScheduled {
 
     private final ChannelRunnerFactory commentRunnerFactory;
     private final ChannelRepository channelRepository;
 
-    public ScheduledChannelRunner(ChannelRunnerFactory commentRunnerFactory, ChannelRepository channelRepository) {
+    public ChannelRunnerScheduled(ChannelRunnerFactory commentRunnerFactory, ChannelRepository channelRepository) {
         this.commentRunnerFactory = commentRunnerFactory;
         this.channelRepository = channelRepository;
     }

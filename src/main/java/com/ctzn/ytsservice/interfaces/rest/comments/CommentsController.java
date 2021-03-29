@@ -1,10 +1,10 @@
-package com.ctzn.ytsservice.interfaces.rest;
+package com.ctzn.ytsservice.interfaces.rest.comments;
 
-import com.ctzn.ytsservice.domain.scraper.entity.CommentEntity;
+import com.ctzn.ytsservice.domain.shared.CommentEntity;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
-import com.ctzn.ytsservice.interfaces.rest.dto.CommentResponse;
-import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
-import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
+import com.ctzn.ytsservice.interfaces.rest.comments.dto.CommentResponse;
+import com.ctzn.ytsservice.interfaces.rest.comments.dto.PagedResponse;
+import com.ctzn.ytsservice.interfaces.rest.comments.transform.ObjectAssembler;
 import org.hibernate.SessionFactory;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.hibernate.persister.entity.AbstractEntityPersister;

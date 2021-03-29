@@ -7,10 +7,9 @@ import com.ctzn.youtubescraper.config.VideoIteratorCfg;
 import com.ctzn.youtubescraper.exception.ScraperException;
 import com.ctzn.youtubescraper.executor.CustomExecutorService;
 import com.ctzn.youtubescraper.model.channelvideos.ChannelDTO;
-import com.ctzn.ytsservice.domain.scraper.entity.ChannelEntity;
-import com.ctzn.ytsservice.domain.scraper.service.PersistenceService;
-import com.ctzn.ytsservice.domain.scraper.entity.VideoEntity;
-import com.ctzn.ytsservice.domain.scraper.entity.WorkerLogEntity;
+import com.ctzn.ytsservice.domain.shared.ChannelEntity;
+import com.ctzn.ytsservice.domain.shared.VideoEntity;
+import com.ctzn.ytsservice.domain.shared.WorkerLogEntity;
 
 import java.util.*;
 import java.util.concurrent.Callable;

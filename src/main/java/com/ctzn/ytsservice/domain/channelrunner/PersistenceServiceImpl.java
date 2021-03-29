@@ -1,9 +1,10 @@
-package com.ctzn.ytsservice.domain.scraper.service;
+package com.ctzn.ytsservice.domain.channelrunner;
 
-import com.ctzn.ytsservice.domain.scraper.entity.ChannelEntity;
-import com.ctzn.ytsservice.domain.scraper.entity.CommentEntity;
-import com.ctzn.ytsservice.domain.scraper.entity.VideoEntity;
-import com.ctzn.ytsservice.domain.scraper.entity.WorkerLogEntity;
+import com.ctzn.youtubescraper.persistence.PersistenceService;
+import com.ctzn.ytsservice.domain.shared.ChannelEntity;
+import com.ctzn.ytsservice.domain.shared.CommentEntity;
+import com.ctzn.ytsservice.domain.shared.VideoEntity;
+import com.ctzn.ytsservice.domain.shared.WorkerLogEntity;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
@@ -13,14 +14,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PersistenceService {
+public class PersistenceServiceImpl implements PersistenceService {
 
     private final ChannelRepository channelRepository;
     private final VideoRepository videoRepository;
     private final CommentRepository commentRepository;
     private final WorkerLogRepository workerLogRepository;
 
-    public PersistenceService(ChannelRepository channelRepository, VideoRepository videoRepository, CommentRepository commentRepository, WorkerLogRepository workerLogRepository) {
+    public PersistenceServiceImpl(ChannelRepository channelRepository, VideoRepository videoRepository, CommentRepository commentRepository, WorkerLogRepository workerLogRepository) {
         this.channelRepository = channelRepository;
         this.videoRepository = videoRepository;
         this.commentRepository = commentRepository;

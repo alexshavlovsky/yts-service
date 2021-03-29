@@ -6,7 +6,7 @@ import com.ctzn.youtubescraper.config.CommentOrderCfg;
 import com.ctzn.youtubescraper.handler.DataHandler;
 import com.ctzn.youtubescraper.iterator.comment.CommentVisitor;
 import com.ctzn.youtubescraper.iterator.comment.IterableCommentContextBuilder;
-import com.ctzn.youtubescraper.model.comments.CommentDTO;
+import com.ctzn.youtubescraper.persistence.dto.CommentDTO;
 
 public class CommentRunnerFactory {
 

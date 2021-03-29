@@ -1,18 +1,31 @@
 package com.ctzn.youtubescraper.persistence;
 
-import com.ctzn.ytsservice.domain.shared.ChannelEntity;
-import com.ctzn.ytsservice.domain.shared.CommentEntity;
-import com.ctzn.ytsservice.domain.shared.VideoEntity;
-import com.ctzn.ytsservice.domain.shared.WorkerLogEntity;
+import com.ctzn.youtubescraper.persistence.dto.*;
 
 import java.util.List;
 
 public interface PersistenceService {
 
-    void saveChannel(ChannelEntity channelEntity, List<VideoEntity> videoEntities);
+    void saveChannelVideos(ChannelVideosDTO channelVideos);
 
-    void saveComments(List<CommentEntity> commentEntities, List<CommentEntity> replyEntities);
+    void saveVideoComments(String videoId, List<CommentDTO> comments, List<CommentDTO> replies);
 
-    void saveOrUpdateWorkerLog(WorkerLogEntity logEntry);
+    void saveWorkerLog(WorkerLogDTO logEntry);
+
+    void setChannelStatus(String channelId, ContextStatusDTO status);
+
+    void setVideoStatus(String videoId, ContextStatusDTO status);
+
+    default void logVideo(String videoId, StatusCode statusCode, String statusMessage) {
+        ContextStatusDTO contextStatus = new ContextStatusDTO(statusCode, statusMessage);
+        saveWorkerLog(new WorkerLogDTO(videoId, contextStatus));
+        setVideoStatus(videoId, contextStatus);
+    }
+
+    default void logChannel(String channelId, StatusCode statusCode, String statusMessage) {
+        ContextStatusDTO contextStatus = new ContextStatusDTO(statusCode, statusMessage);
+        saveWorkerLog(new WorkerLogDTO(channelId, contextStatus));
+        setChannelStatus(channelId, contextStatus);
+    }
 
 }

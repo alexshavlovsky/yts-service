@@ -12,12 +12,4 @@ public class YtsServiceApplication {
         SpringApplication.run(YtsServiceApplication.class, args);
     }
 
-//    @Autowired
-//    AsyncChannelRunner asyncChannelRunner;
-//
-//    @Bean
-//    CommandLineRunner startWorker() {
-//        return args -> asyncChannelRunner.newTask("UCksTNgiRyQGwi2ODBie8HdA");
-//    }
-
 }

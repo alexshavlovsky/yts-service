@@ -1,5 +1,0 @@
-### Get all
-GET {{api-url}}/comments?text=book&page=0&size=5&sort=authorText,asc
-Accept: application/json
-
-###

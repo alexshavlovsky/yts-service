@@ -1,6 +1,7 @@
-package com.ctzn.ytsservice.domain.shared;
+package com.ctzn.ytsservice.domain.entities;
 
-import com.ctzn.youtubescraper.model.channelvideos.VideoDTO;
+import com.ctzn.youtubescraper.persistence.dto.StatusCode;
+import com.ctzn.youtubescraper.persistence.dto.VideoDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,6 +27,8 @@ public class VideoEntity extends Auditable {
     int viewCountText;
     @OneToMany(mappedBy = "video")
     List<CommentEntity> comments;
+    @Embedded
+    ContextStatus contextStatus;
 
     public static VideoEntity fromVideoDTO(VideoDTO dto, ChannelEntity channel) {
         return new VideoEntity(
@@ -34,7 +37,8 @@ public class VideoEntity extends Auditable {
                 dto.getTitle(),
                 dto.getPublishedTimeText(),
                 dto.getViewCountText(),
-                Collections.emptyList()
+                Collections.emptyList(),
+                new ContextStatus(StatusCode.METADATA_FETCHED)
         );
     }
 }

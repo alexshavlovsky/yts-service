@@ -1,13 +1,15 @@
-package com.ctzn.ytsservice.domain.shared;
+package com.ctzn.ytsservice.domain.entities;
 
-import com.ctzn.youtubescraper.model.comments.CommentDTO;
+import com.ctzn.youtubescraper.persistence.dto.CommentDTO;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -37,18 +39,37 @@ public class CommentEntity extends Auditable {
     @OneToMany(mappedBy = "parent")
     List<CommentEntity> replies;
 
-    public static CommentEntity fromCommentDTO(CommentDTO dto, Map<String, VideoEntity> videoEntityMap, Map<String, CommentEntity> commentEntityMap) {
+    public String getVideoId() {
+        return video.getVideoId();
+    }
+
+    public String getParentId() {
+        return parent == null ? null : parent.getCommentId();
+    }
+
+    public static CommentEntity fromCommentDTO(VideoEntity videoEntity, CommentEntity parentComment, CommentDTO dto) {
         return new CommentEntity(
                 dto.getCommentId(),
-                videoEntityMap.get(dto.getVideoId()),
+                videoEntity,
                 dto.getAuthorText(),
                 dto.getChannelId(),
                 dto.getPublishedTimeText(),
                 dto.getText(),
                 dto.getLikeCount(),
                 dto.getReplyCount(),
-                dto.getParentCommentId() == null || commentEntityMap == null ? null : commentEntityMap.get(dto.getParentCommentId()),
+                parentComment,
                 Collections.emptyList()
         );
     }
+
+    public static Map<String, CommentEntity> getCommentMap(VideoEntity videoEntity, List<CommentDTO> comments) {
+        return comments.stream().map(comment -> fromCommentDTO(videoEntity, null, comment))
+                .collect(LinkedHashMap::new, (map, comment) -> map.put(comment.getCommentId(), comment), Map::putAll);
+    }
+
+    public static List<CommentEntity> getReplyList(VideoEntity videoEntity, List<CommentDTO> replies, Map<String, CommentEntity> commentEntityMap) {
+        return replies.stream().map(comment -> fromCommentDTO(videoEntity, commentEntityMap.get(comment.parentCommentId), comment))
+                .collect(Collectors.toList());
+    }
+
 }

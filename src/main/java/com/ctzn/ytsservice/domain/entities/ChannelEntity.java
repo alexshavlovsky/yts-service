@@ -1,12 +1,10 @@
-package com.ctzn.ytsservice.domain.shared;
+package com.ctzn.ytsservice.domain.entities;
 
-import com.ctzn.youtubescraper.model.channelvideos.ChannelDTO;
+import com.ctzn.youtubescraper.persistence.dto.ChannelDTO;
+import com.ctzn.youtubescraper.persistence.dto.StatusCode;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +26,8 @@ public class ChannelEntity extends Auditable {
     public Long subscriberCount;
     @OneToMany(mappedBy = "channel")
     public List<VideoEntity> videos;
-    public ChannelStatus channelStatus;
+    @Embedded
+    ContextStatus contextStatus;
 
     public static ChannelEntity fromChannelDTO(ChannelDTO dto) {
         return new ChannelEntity(
@@ -38,7 +37,7 @@ public class ChannelEntity extends Auditable {
                 dto.getVideoCount(),
                 dto.getSubscriberCount(),
                 Collections.emptyList(),
-                ChannelStatus.METADATA_FETCHED
+                new ContextStatus(StatusCode.METADATA_FETCHED)
         );
     }
 
@@ -50,7 +49,7 @@ public class ChannelEntity extends Auditable {
                 null,
                 null,
                 Collections.emptyList(),
-                ChannelStatus.PENDING
+                new ContextStatus(StatusCode.PENDING)
         );
     }
 

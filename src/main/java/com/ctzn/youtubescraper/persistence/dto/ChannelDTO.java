@@ -1,8 +1,6 @@
-package com.ctzn.youtubescraper.model.channelvideos;
+package com.ctzn.youtubescraper.persistence.dto;
 
 import lombok.Value;
-
-import java.util.List;
 
 @Value
 public class ChannelDTO {
@@ -11,5 +9,4 @@ public class ChannelDTO {
     public String title;
     public Integer videoCount;
     public Long subscriberCount;
-    public List<VideoDTO> videos;
 }

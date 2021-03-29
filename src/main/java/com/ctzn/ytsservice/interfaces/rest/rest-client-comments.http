@@ -1,0 +1,5 @@
+### Get comments paged query
+GET {{api-url}}/comments?text=to&page=0&size=10&sort=authorText,asc
+Accept: application/json
+
+###

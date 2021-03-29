@@ -1,8 +1,8 @@
-package com.ctzn.ytsservice.interfaces.rest.comments.transform;
+package com.ctzn.ytsservice.interfaces.rest.transform;
 
-import com.ctzn.ytsservice.domain.shared.CommentEntity;
-import com.ctzn.ytsservice.interfaces.rest.comments.dto.CommentResponse;
-import com.ctzn.ytsservice.interfaces.rest.comments.dto.PagedResponse;
+import com.ctzn.ytsservice.domain.entities.CommentEntity;
+import com.ctzn.ytsservice.interfaces.rest.dto.CommentResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;

@@ -1,6 +1,7 @@
 package com.ctzn.youtubescraper.model.channelvideos;
 
 import com.ctzn.youtubescraper.exception.ScraperParserException;
+import com.ctzn.youtubescraper.persistence.dto.VideoDTO;
 import com.ctzn.youtubescraper.model.commons.Continuation;
 import com.ctzn.youtubescraper.model.commons.ContinuationEndpoint;
 import com.ctzn.youtubescraper.model.commons.ContinuationItemRenderer;

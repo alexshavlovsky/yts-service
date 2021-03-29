@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.infrastrucure.repositories;
 
-import com.ctzn.ytsservice.domain.shared.CommentEntity;
+import com.ctzn.ytsservice.domain.entities.CommentEntity;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

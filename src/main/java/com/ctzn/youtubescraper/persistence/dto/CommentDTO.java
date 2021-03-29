@@ -1,4 +1,4 @@
-package com.ctzn.youtubescraper.model.comments;
+package com.ctzn.youtubescraper.persistence.dto;
 
 import lombok.Value;
 

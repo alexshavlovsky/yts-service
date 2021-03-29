@@ -1,5 +1,6 @@
 package com.ctzn.youtubescraper.model.comments;
 
+import com.ctzn.youtubescraper.persistence.dto.CommentDTO;
 import com.ctzn.youtubescraper.model.commons.*;
 
 import java.util.*;

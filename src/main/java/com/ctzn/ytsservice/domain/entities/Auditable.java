@@ -1,5 +1,7 @@
-package com.ctzn.ytsservice.domain.shared;
+package com.ctzn.ytsservice.domain.entities;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -10,6 +12,8 @@ import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
 @MappedSuperclass
+@Getter
+@Setter
 @EntityListeners(AuditingEntityListener.class)
 public class Auditable {
 
@@ -19,6 +23,6 @@ public class Auditable {
 
     @LastModifiedDate
     @Column(name = "last_updated_date")
-    private Date lastModifiedDate;
+    private Date lastUpdatedDate;
 
 }

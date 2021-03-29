@@ -9,15 +9,16 @@ import com.ctzn.youtubescraper.http.YoutubeChannelVideosClient;
 import com.ctzn.youtubescraper.http.useragent.UserAgentAbstractFactory;
 import com.ctzn.youtubescraper.http.useragent.UserAgentFactory;
 import com.ctzn.youtubescraper.iterator.video.VideoContext;
-import com.ctzn.youtubescraper.model.channelvideos.ChannelDTO;
-import com.ctzn.youtubescraper.model.channelvideos.VideoDTO;
 import com.ctzn.youtubescraper.model.channelvideos.VideosGrid;
+import com.ctzn.youtubescraper.persistence.dto.ChannelDTO;
+import com.ctzn.youtubescraper.persistence.dto.ChannelVideosDTO;
+import com.ctzn.youtubescraper.persistence.dto.VideoDTO;
 import lombok.extern.java.Log;
 
 import java.util.concurrent.Callable;
 
 @Log
-public class ChannelVideosCollector implements Callable<ChannelDTO> {
+public class ChannelVideosCollector implements Callable<ChannelVideosDTO> {
 
     private final String channelId;
     private final DataCollector<VideoDTO> handler = new DataCollector<>();
@@ -29,20 +30,20 @@ public class ChannelVideosCollector implements Callable<ChannelDTO> {
     }
 
     @Override
-    public ChannelDTO call() throws ScraperException {
+    public ChannelVideosDTO call() throws ScraperException {
         try {
             YoutubeChannelMetadataClient metadataClient = new YoutubeChannelMetadataClient(userAgentFactory, channelId);
             IterableHttpClient<VideosGrid> videosClient = new YoutubeChannelVideosClient(userAgentFactory, channelId, metadataClient.getChannelVanityName());
             VideoContext videosContext = new VideoContext(videosClient);
             videosContext.traverse(handler);
             log.info("DONE " + videosContext.getShortResultStat());
-            return new ChannelDTO(channelId,
-                    metadataClient.getChannelVanityName(),
-                    metadataClient.getChannelHeader().getTitle(),
-                    handler.size(),
-                    metadataClient.getChannelHeader().getSubscriberCount(),
-                    handler
-            );
+            return new ChannelVideosDTO(
+                    new ChannelDTO(channelId,
+                            metadataClient.getChannelVanityName(),
+                            metadataClient.getChannelHeader().getTitle(),
+                            handler.size(),
+                            metadataClient.getChannelHeader().getSubscriberCount()),
+                    handler);
         } catch (ScrapperInterruptedException e) {
             log.info("INTERRUPTED " + channelId + ": " + e.toString());
             throw e;
@@ -51,4 +52,5 @@ public class ChannelVideosCollector implements Callable<ChannelDTO> {
             throw e;
         }
     }
+
 }

@@ -6,12 +6,12 @@ import com.ctzn.youtubescraper.config.ExecutorCfg;
 import com.ctzn.youtubescraper.config.VideoIteratorCfg;
 import com.ctzn.youtubescraper.exception.ScraperException;
 import com.ctzn.youtubescraper.executor.CustomExecutorService;
-import com.ctzn.youtubescraper.model.channelvideos.ChannelDTO;
-import com.ctzn.ytsservice.domain.shared.ChannelEntity;
-import com.ctzn.ytsservice.domain.shared.VideoEntity;
-import com.ctzn.ytsservice.domain.shared.WorkerLogEntity;
+import com.ctzn.youtubescraper.persistence.dto.ChannelVideosDTO;
+import com.ctzn.youtubescraper.persistence.dto.StatusCode;
+import com.ctzn.youtubescraper.persistence.dto.VideoDTO;
 
-import java.util.*;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -37,42 +37,34 @@ public class PersistenceChannelRunner implements Callable<Void> {
         return PersistenceChannelRunnerStepBuilder.newBuilder(channelId, persistenceService);
     }
 
-    private Map<String, VideoEntity> grabChannelData(String channelId) throws ScraperException {
+    private List<VideoDTO> grabChannelData(String channelId) throws ScraperException {
         ChannelVideosCollector collector = new ChannelVideosCollector(channelId);
-        ChannelDTO channel = collector.call();
-        ChannelEntity channelEntity = ChannelEntity.fromChannelDTO(channel);
-        List<VideoEntity> videoEntities =
-                (videoIteratorCfg.getVideoCountLimit().isUnrestricted() ?
-                        channel.getVideos().stream() :
-                        channel.getVideos().stream().limit(videoIteratorCfg.getVideoCountLimit().get())
-                ).map(v -> VideoEntity.fromVideoDTO(v, channelEntity)).collect(Collectors.toList());
-        persistenceService.saveChannel(channelEntity, videoEntities);
-        return videoEntities.stream().collect(LinkedHashMap::new, (map, video) -> map.put(video.getVideoId(), video), Map::putAll);
+        ChannelVideosDTO channelVideos = collector.call();
+        persistenceService.saveChannelVideos(channelVideos);
+        return (videoIteratorCfg.getVideoCountLimit().isUnrestricted() ?
+                channelVideos.getVideos().stream() :
+                channelVideos.getVideos().stream().limit(videoIteratorCfg.getVideoCountLimit().get())
+        ).collect(Collectors.toList());
     }
 
-    private void grabComments(Map<String, VideoEntity> videoEntityMap) throws InterruptedException {
+    private void grabComments(List<VideoDTO> videos) throws InterruptedException {
         executorCfg.addThreadNameSegment(channelId);
         CustomExecutorService executor = executorCfg.build();
-        videoEntityMap.keySet().stream()
-                .map(videoId -> new PersistenceCommentRunner(videoId, videoEntityMap, persistenceService, commentOrderCfg, commentIteratorCfg))
+        videos.stream()
+                .map(video -> new PersistenceCommentRunner(video.getVideoId(), persistenceService, commentOrderCfg, commentIteratorCfg))
                 .forEach(executor::submit);
         executor.awaitAndTerminate();
     }
 
     @Override
     public Void call() throws Exception {
-        WorkerLogEntity logEntry = new WorkerLogEntity(null, channelId, new Date(), null, "STARTED", toString());
-        persistenceService.saveOrUpdateWorkerLog(logEntry);
+        persistenceService.logChannel(channelId, StatusCode.PASSED_TO_WORKER, toString());
         try {
-            Map<String, VideoEntity> videoEntityMap = grabChannelData(channelId);
-            grabComments(videoEntityMap);
-            logEntry.setFinishedDate(new Date());
-            logEntry.setStatus("DONE: videos: " + videoEntityMap.size());
-            persistenceService.saveOrUpdateWorkerLog(logEntry);
+            List<VideoDTO> videos = grabChannelData(channelId);
+            grabComments(videos);
+            persistenceService.logChannel(channelId, StatusCode.DONE, "videosProcessed: " + videos.size());
         } catch (Exception e) {
-            logEntry.setFinishedDate(new Date());
-            logEntry.setStatus("EXCEPTION: " + e.getMessage());
-            persistenceService.saveOrUpdateWorkerLog(logEntry);
+            persistenceService.logChannel(channelId, StatusCode.ERROR, e.getMessage());
             throw e;
         }
         return null;

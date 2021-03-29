@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.domain.channelrunner;
+package com.ctzn.ytsservice.application.channelrunner;
 
 import com.ctzn.youtubescraper.persistence.PersistenceChannelRunner;
 import com.ctzn.youtubescraper.persistence.PersistenceService;

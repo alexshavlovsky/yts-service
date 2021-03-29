@@ -5,7 +5,7 @@ import com.ctzn.youtubescraper.exception.ScraperParserException;
 import com.ctzn.youtubescraper.exception.ScrapperInterruptedException;
 import com.ctzn.youtubescraper.handler.DataHandler;
 import com.ctzn.youtubescraper.http.IterableHttpClient;
-import com.ctzn.youtubescraper.model.channelvideos.VideoDTO;
+import com.ctzn.youtubescraper.persistence.dto.VideoDTO;
 import com.ctzn.youtubescraper.model.channelvideos.VideosGrid;
 import lombok.extern.java.Log;
 

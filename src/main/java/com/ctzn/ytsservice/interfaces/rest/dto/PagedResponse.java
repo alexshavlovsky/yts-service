@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.interfaces.rest.comments.dto;
+package com.ctzn.ytsservice.interfaces.rest.dto;
 
 import lombok.Data;
 

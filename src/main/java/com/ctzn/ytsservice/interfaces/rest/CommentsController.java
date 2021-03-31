@@ -33,20 +33,6 @@ public class CommentsController {
         this.domainMapper = domainMapper;
     }
 
-//    Native SQL runner
-//    @Autowired
-//    private DataSource dataSource;
-//
-//    @PostConstruct
-//    public void runNativeSql() {
-//        ClassPathResource resource = new ClassPathResource("full_text_init_h2db.sql");
-//        try (Connection connection = dataSource.getConnection()) {
-//            ScriptUtils.executeSqlScript(connection, resource);
-//        } catch (SQLException | ScriptException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     @GetMapping()
     public ResponseEntity<PagedResponse<CommentResponse>> findByTextContaining(@RequestParam(value = "text", required = false) String text, Pageable pageable) {
         Page<CommentEntity> page = text == null || text.isEmpty() || text.isBlank() ?

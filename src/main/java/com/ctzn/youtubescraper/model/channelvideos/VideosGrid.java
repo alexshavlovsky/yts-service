@@ -1,12 +1,12 @@
 package com.ctzn.youtubescraper.model.channelvideos;
 
 import com.ctzn.youtubescraper.exception.ScraperParserException;
-import com.ctzn.youtubescraper.persistence.dto.VideoDTO;
 import com.ctzn.youtubescraper.model.commons.Continuation;
 import com.ctzn.youtubescraper.model.commons.ContinuationEndpoint;
 import com.ctzn.youtubescraper.model.commons.ContinuationItemRenderer;
 import com.ctzn.youtubescraper.model.commons.NextContinuationData;
 import com.ctzn.youtubescraper.parser.ParserUtil;
+import com.ctzn.youtubescraper.persistence.dto.VideoDTO;
 import lombok.Value;
 import lombok.extern.java.Log;
 
@@ -82,7 +82,7 @@ public class VideosGrid {
                     r.getVideoId(),
                     r.getTitle() == null ? null : r.getTitle().toString(),
                     r.getPublishedTimeText() == null ? null : r.getPublishedTimeText().toString(), // if null then this video is probably a live stream
-                    parseDigitsToInt(r.getViewCountText().toString())
+                    r.getViewCountText() == null ? 0 : parseDigitsToInt(r.getViewCountText().toString())
             );
             list.add(videoDTO);
         }

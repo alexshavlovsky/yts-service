@@ -1,0 +1,5 @@
+### Get channels paged query
+GET {{api-url}}/channels?text=adam&page=0&size=10&sort=videoCount,desc
+Accept: application/json
+
+###

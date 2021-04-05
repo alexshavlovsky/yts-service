@@ -2,9 +2,11 @@ package com.ctzn.ytsservice.interfaces.rest.transform;
 
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.CommentEntity;
+import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.CommentResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.VideoResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
@@ -47,6 +49,9 @@ public class ObjectAssembler {
     private static final Type PAGED_CHANNEL_RESPONSE = new TypeToken<PagedResponse<ChannelResponse>>() {
     }.getType();
 
+    private static final Type PAGED_VIDEO_RESPONSE = new TypeToken<PagedResponse<VideoResponse>>() {
+    }.getType();
+
     // GENERIC MAPPERS
     public PagedResponse<CommentResponse> fromCommentPageToPagedResponse(Page<CommentEntity> page) {
         return map(page, PAGED_COMMENT_RESPONSE);
@@ -54,6 +59,10 @@ public class ObjectAssembler {
 
     public PagedResponse<ChannelResponse> fromChannelPageToPagedResponse(Page<ChannelEntity> page) {
         return map(page, PAGED_CHANNEL_RESPONSE);
+    }
+
+    public PagedResponse<VideoResponse> fromVideoPageToPagedResponse(Page<VideoEntity> page) {
+        return map(page, PAGED_VIDEO_RESPONSE);
     }
 
 }

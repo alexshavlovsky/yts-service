@@ -31,6 +31,10 @@ public class VideoEntity extends Auditable {
     ContextStatus contextStatus;
     Integer totalCommentCount;
 
+    public String getChannelId() {
+        return channel.getChannelId();
+    }
+
     public static VideoEntity fromVideoDTO(VideoDTO dto, ChannelEntity channel) {
         return new VideoEntity(
                 dto.getVideoId(),

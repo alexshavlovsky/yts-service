@@ -1,9 +1,16 @@
 package com.ctzn.ytsservice.infrastrucure.repositories;
 
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-@Repository
-public interface VideoRepository extends CrudRepository<VideoEntity, String> {
+@NoRepositoryBean
+public interface VideoRepository extends PagingAndSortingRepository<VideoEntity, String> {
+
+    Page<VideoEntity> findAllByTitleContainingIgnoreCase(String title, Pageable pageable);
+
+    Page<VideoEntity> nativeFts(String query, Pageable pageable);
+
 }

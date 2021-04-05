@@ -1,5 +1,9 @@
 -- init the native full text search on the comments table
 
+-- --------------------------------------------------
+--                    COMMENTS
+-- --------------------------------------------------
+
 -- create a tsv column
 ALTER TABLE comments
     ADD tsv tsvector;
@@ -33,6 +37,9 @@ EXECUTE PROCEDURE comments_tsv_trigger();
 -- ALTER TABLE comments DISABLE TRIGGER all;
 -- ALTER TABLE comments ENABLE TRIGGER all;
 
+-- --------------------------------------------------
+--                    CHANNELS
+-- --------------------------------------------------
 
 -- create a tsv column
 ALTER TABLE channels
@@ -62,3 +69,36 @@ CREATE TRIGGER channels_tsv_update
     ON channels
     FOR EACH ROW
 EXECUTE PROCEDURE channels_tsv_trigger();
+
+-- --------------------------------------------------
+--                    VIDEOS
+-- --------------------------------------------------
+
+-- create a tsv column
+ALTER TABLE videos
+    ADD tsv tsvector;
+
+-- update a tsv column
+update videos
+set tsv = to_tsvector(coalesce(title, ''));
+
+-- create an index
+CREATE INDEX videos_tsv_idx
+    ON videos
+        USING GIN (tsv);
+
+-- create a trigger function
+CREATE FUNCTION videos_tsv_trigger() RETURNS trigger AS
+$$
+begin
+    new.tsv := to_tsvector(coalesce(new.title, ''));
+    return new;
+end
+$$ LANGUAGE plpgsql;
+
+-- create a trigger
+CREATE TRIGGER videos_tsv_update
+    BEFORE INSERT OR UPDATE
+    ON videos
+    FOR EACH ROW
+EXECUTE PROCEDURE videos_tsv_trigger();

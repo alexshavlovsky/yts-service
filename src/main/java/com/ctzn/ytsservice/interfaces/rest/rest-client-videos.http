@@ -1,0 +1,5 @@
+### Get videos paged query
+GET {{api-url}}/videos?text=of&page=0&size=10&sort=totalCommentCount,desc
+Accept: application/json
+
+###

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 @Profile("postgres")
 public interface ChannelRepositoryPostgres extends ChannelRepository {
 
-    @Query(value = "select * from channel where tsv @@ plainto_tsquery(:plain_query)",
-            countQuery = "select count(*) from channel where tsv @@ plainto_tsquery(:plain_query)",
+    @Query(value = "select * from channels where tsv @@ plainto_tsquery(:plain_query)",
+            countQuery = "select count(*) from channels where tsv @@ plainto_tsquery(:plain_query)",
             nativeQuery = true)
     Page<ChannelEntity> nativeFts(@Param("plain_query") String query, Pageable pageable);
 

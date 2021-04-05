@@ -1,7 +1,7 @@
 package com.ctzn.ytsservice.application.channelrunner;
 
-import com.ctzn.youtubescraper.persistence.PersistenceService;
-import com.ctzn.youtubescraper.persistence.dto.*;
+import com.ctzn.youtubescraper.core.persistence.PersistenceService;
+import com.ctzn.youtubescraper.core.persistence.dto.*;
 import com.ctzn.ytsservice.domain.entities.*;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
@@ -54,6 +54,17 @@ public class PersistenceServiceImpl implements PersistenceService {
 
         List<CommentEntity> replyEntities = CommentEntity.getReplyList(videoEntity, replies, commentEntityMap);
         commentRepository.saveAll(replyEntities);
+    }
+
+    @Override
+    public void updateVideoTotalCommentCount(String videoId, int totalCommentCount) {
+        VideoEntity videoEntity = videoRepository.findById(videoId).orElse(null);
+        if (videoEntity == null) {
+            log.warning("Can't update total comment count The video doesn't exist: " + videoId);
+            return;
+        }
+        videoEntity.setTotalCommentCount(totalCommentCount);
+        videoRepository.save(videoEntity);
     }
 
     @Override

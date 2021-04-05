@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.domain.entities;
 
-import com.ctzn.youtubescraper.persistence.dto.WorkerLogDTO;
+import com.ctzn.youtubescraper.core.persistence.dto.WorkerLogDTO;
 import lombok.*;
 
 import javax.persistence.*;

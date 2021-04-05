@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.application.channelrunner;
 
-import com.ctzn.youtubescraper.persistence.dto.StatusCode;
+import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
 import lombok.extern.java.Log;

@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.domain.entities;
 
-import com.ctzn.youtubescraper.persistence.dto.CommentDTO;
+import com.ctzn.youtubescraper.core.persistence.dto.CommentDTO;
 import lombok.*;
 import org.hibernate.annotations.Type;
 

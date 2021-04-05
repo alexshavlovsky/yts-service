@@ -1,7 +1,7 @@
 package com.ctzn.ytsservice.application.channelrunner;
 
-import com.ctzn.youtubescraper.persistence.PersistenceChannelRunner;
-import com.ctzn.youtubescraper.persistence.PersistenceService;
+import com.ctzn.youtubescraper.core.persistence.PersistenceChannelRunner;
+import com.ctzn.youtubescraper.core.persistence.PersistenceService;
 import org.springframework.stereotype.Component;
 
 @Component

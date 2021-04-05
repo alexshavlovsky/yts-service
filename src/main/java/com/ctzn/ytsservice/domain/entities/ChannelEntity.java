@@ -1,7 +1,7 @@
 package com.ctzn.ytsservice.domain.entities;
 
-import com.ctzn.youtubescraper.persistence.dto.ChannelDTO;
-import com.ctzn.youtubescraper.persistence.dto.StatusCode;
+import com.ctzn.youtubescraper.core.persistence.dto.ChannelDTO;
+import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,6 +1,7 @@
 package com.ctzn.youtubescraper.core.model.comments;
 
 import com.ctzn.youtubescraper.core.model.commons.*;
+import com.ctzn.youtubescraper.core.parser.ParserUtil;
 import com.ctzn.youtubescraper.core.persistence.dto.CommentDTO;
 
 import java.util.*;
@@ -8,7 +9,7 @@ import java.util.*;
 public class CommentItemSection {
     public List<Content> contents;
     public List<Continuation> continuations;
-//    public String trackingParams;
+    //    public String trackingParams;
     public SectionHeader header;
     public String sectionIdentifier;
 
@@ -76,12 +77,14 @@ public class CommentItemSection {
         List<CommentDTO> list = new ArrayList<>();
         for (Content c : contents) {
             CommentRenderer r = c.getCommentRenderer();
+            String publishedTimeText = r.publishedTimeText == null ? null : r.publishedTimeText.toString();
             CommentDTO commentDTO = new CommentDTO(
                     videoId,
                     r.commentId,
                     r.authorText == null ? "" : r.authorText.toString(),
                     r.authorEndpoint == null ? "" : r.authorEndpoint.browseEndpoint.browseId,
-                    r.publishedTimeText.toString(),
+                    publishedTimeText,
+                    ParserUtil.parsePublishedTimeText(publishedTimeText),
                     r.contentText.toString(),
                     r.likeCount,
                     r.replyCount,
@@ -121,7 +124,7 @@ public class CommentItemSection {
         public String commentId;
         public boolean authorIsChannelOwner;
         public String voteStatus;
-//        public String trackingParams;
+        //        public String trackingParams;
         public SimpleText voteCount;
         public int replyCount;
     }
@@ -130,7 +133,7 @@ public class CommentItemSection {
         public Comment comment;
         public Replies replies;
         public CommentTargetTitle commentTargetTitle;
-//        public String trackingParams;
+        //        public String trackingParams;
         public String renderingPriority;
     }
 
@@ -147,7 +150,7 @@ public class CommentItemSection {
     static class CommentRepliesRenderer {
         public List<Continuation> continuations;
         public Text moreText;
-//        public String trackingParams;
+        //        public String trackingParams;
         public Text lessText;
     }
 

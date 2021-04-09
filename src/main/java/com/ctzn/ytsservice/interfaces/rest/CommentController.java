@@ -27,7 +27,7 @@ public class CommentController {
 
     @GetMapping()
     public ResponseEntity<PagedResponse<CommentResponse>> findByTextContaining(@RequestParam(value = "text", required = false) String text, Pageable pageable) {
-        Page<CommentEntity> page = commentService.getComments(text, pageable, false);
+        Page<CommentEntity> page = commentService.getComments(text, pageable, true);
         return ResponseEntity.ok().body(domainMapper.fromCommentPageToPagedResponse(page));
     }
 

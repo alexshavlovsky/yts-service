@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -23,7 +24,8 @@ public class VideoEntity extends Auditable {
     @JoinColumn(name = "channel_id")
     ChannelEntity channel;
     String title;
-    String publishedTimeText;
+    public String publishedTimeText;
+    public Date publishedDate;
     int viewCountText;
     @OneToMany(mappedBy = "video")
     List<CommentEntity> comments;
@@ -35,12 +37,17 @@ public class VideoEntity extends Auditable {
         return channel.getChannelId();
     }
 
+    public String getChannelTitle() {
+        return channel.getTitle();
+    }
+
     public static VideoEntity fromVideoDTO(VideoDTO dto, ChannelEntity channel) {
         return new VideoEntity(
                 dto.getVideoId(),
                 channel,
                 dto.getTitle(),
                 dto.getPublishedTimeText(),
+                dto.getPublishedDate(),
                 dto.getViewCountText(),
                 Collections.emptyList(),
                 new ContextStatus(StatusCode.METADATA_FETCHED),

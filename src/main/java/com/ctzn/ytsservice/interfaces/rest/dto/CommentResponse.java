@@ -8,9 +8,11 @@ import java.util.Date;
 public class CommentResponse {
     public String commentId;
     public String videoId;
+    public String videoTitle;
     public String authorText;
     public String channelId;
     public String publishedTimeText;
+    public Date publishedDate;
     public String text;
     public int likeCount;
     public int replyCount;

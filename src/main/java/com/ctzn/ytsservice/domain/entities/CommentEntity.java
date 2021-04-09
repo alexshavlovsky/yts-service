@@ -5,10 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -28,6 +25,7 @@ public class CommentEntity extends Auditable {
     public String authorText;
     public String channelId;
     public String publishedTimeText;
+    public Date publishedDate;
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     public String text;
@@ -43,6 +41,10 @@ public class CommentEntity extends Auditable {
         return video.getVideoId();
     }
 
+    public String getVideoTitle() {
+        return video.getTitle();
+    }
+
     public String getParentId() {
         return parent == null ? null : parent.getCommentId();
     }
@@ -54,6 +56,7 @@ public class CommentEntity extends Auditable {
                 dto.getAuthorText(),
                 dto.getChannelId(),
                 dto.getPublishedTimeText(),
+                dto.getPublishedDate(),
                 dto.getText(),
                 dto.getLikeCount(),
                 dto.getReplyCount(),

@@ -27,7 +27,7 @@ public class VideoEntity extends Auditable {
     public String publishedTimeText;
     public Date publishedDate;
     int viewCountText;
-    @OneToMany(mappedBy = "video")
+    @OneToMany(mappedBy = "video", orphanRemoval = true)
     List<CommentEntity> comments;
     @Embedded
     ContextStatus contextStatus;

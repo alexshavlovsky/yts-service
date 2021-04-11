@@ -32,4 +32,8 @@ public class ChannelService {
         }
     }
 
+    public void deleteChannel(String channelId) {
+        repository.deleteById(channelId);
+    }
+
 }

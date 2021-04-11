@@ -24,7 +24,7 @@ public class ChannelEntity extends Auditable {
     public String title;
     public Integer videoCount;
     public Long subscriberCount;
-    @OneToMany(mappedBy = "channel")
+    @OneToMany(mappedBy = "channel", orphanRemoval = true)
     public List<VideoEntity> videos;
     @Embedded
     ContextStatus contextStatus;

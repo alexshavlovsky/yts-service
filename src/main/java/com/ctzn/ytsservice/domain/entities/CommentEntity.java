@@ -34,7 +34,7 @@ public class CommentEntity extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     public CommentEntity parent;
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
     List<CommentEntity> replies;
 
     public String getVideoId() {

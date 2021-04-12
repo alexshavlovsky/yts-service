@@ -3,6 +3,8 @@ package com.ctzn.ytsservice.domain.entities;
 import com.ctzn.youtubescraper.core.persistence.dto.ChannelDTO;
 import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -24,7 +26,8 @@ public class ChannelEntity extends Auditable {
     public String title;
     public Integer videoCount;
     public Long subscriberCount;
-    @OneToMany(mappedBy = "channel", orphanRemoval = true)
+    @OneToMany(mappedBy = "channel")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public List<VideoEntity> videos;
     @Embedded
     ContextStatus contextStatus;

@@ -2,6 +2,8 @@ package com.ctzn.ytsservice.domain.entities;
 
 import com.ctzn.youtubescraper.core.persistence.dto.CommentDTO;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -34,7 +36,8 @@ public class CommentEntity extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     public CommentEntity parent;
-    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @OneToMany(mappedBy = "parent")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     List<CommentEntity> replies;
 
     public String getVideoId() {

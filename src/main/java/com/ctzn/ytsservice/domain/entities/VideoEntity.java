@@ -3,6 +3,8 @@ package com.ctzn.ytsservice.domain.entities;
 import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.youtubescraper.core.persistence.dto.VideoDTO;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -27,7 +29,8 @@ public class VideoEntity extends Auditable {
     public String publishedTimeText;
     public Date publishedDate;
     int viewCountText;
-    @OneToMany(mappedBy = "video", orphanRemoval = true)
+    @OneToMany(mappedBy = "video")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     List<CommentEntity> comments;
     @Embedded
     ContextStatus contextStatus;

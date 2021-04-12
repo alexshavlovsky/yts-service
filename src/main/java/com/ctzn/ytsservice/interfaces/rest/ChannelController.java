@@ -5,6 +5,7 @@ import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
+import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/channels")
+@Log
 public class ChannelController {
 
     private ChannelService channelService;
@@ -30,8 +32,9 @@ public class ChannelController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteChannel(@PathVariable("id") String channelId) {
-        // TODO improve performance of this call
+        log.info("Delete a channel: " + channelId);
         channelService.deleteChannel(channelId);
+        log.info("OK deleting a channel: " + channelId);
         return ResponseEntity.ok().body(channelId);
     }
 

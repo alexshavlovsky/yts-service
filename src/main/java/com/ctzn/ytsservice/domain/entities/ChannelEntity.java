@@ -32,7 +32,11 @@ public class ChannelEntity extends Auditable {
     @Embedded
     ContextStatus contextStatus;
 
-    public static ChannelEntity fromChannelDTO(ChannelDTO dto) {
+    public Integer getFetchedVideoCount() {
+        return videos.size();
+    }
+
+    public static ChannelEntity fromChannelDTO(ChannelDTO dto, ContextStatus contextStatus) {
         return new ChannelEntity(
                 dto.getChannelId(),
                 dto.getChannelVanityName(),
@@ -40,14 +44,14 @@ public class ChannelEntity extends Auditable {
                 dto.getVideoCount(),
                 dto.getSubscriberCount(),
                 Collections.emptyList(),
-                new ContextStatus(StatusCode.METADATA_FETCHED)
+                contextStatus
         );
     }
 
     public static ChannelEntity newPendingChannel(String channelId) {
         return new ChannelEntity(
                 channelId,
-                null,
+                channelId,
                 null,
                 null,
                 null,

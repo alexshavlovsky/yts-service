@@ -6,4 +6,9 @@ Accept: application/json
 DELETE {{api-url}}/channels/UCksTNgiRyQGwi2ODBie8HdA
 Accept: application/json
 
+### Get a channel summary
+
+GET {{api-url}}/channels/UCksTNgiRyQGwi2ODBie8HdA
+Accept: application/json
+
 ###

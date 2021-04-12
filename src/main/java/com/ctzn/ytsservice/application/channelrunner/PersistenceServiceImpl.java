@@ -35,7 +35,14 @@ public class PersistenceServiceImpl implements PersistenceService {
 
     @Override
     public void saveChannelVideos(ChannelVideosDTO channelVideos) {
-        ChannelEntity channelEntity = channelRepository.save(ChannelEntity.fromChannelDTO(channelVideos.getChannel()));
+        ContextStatusDTO contextStatusDTO = new ContextStatusDTO(StatusCode.METADATA_FETCHED,
+                String.format("Videos collected: %d of %d", channelVideos.getVideos().size(), channelVideos.getChannel().getVideoCount())
+        );
+        saveWorkerLog(new WorkerLogDTO(channelVideos.getChannel().getChannelId(), contextStatusDTO));
+        ChannelEntity channelEntity = channelRepository.save(ChannelEntity.fromChannelDTO(
+                channelVideos.getChannel(),
+                ContextStatus.fromContextStatusDTO(contextStatusDTO)
+        ));
         List<VideoEntity> videos = channelVideos.getVideos().stream()
                 .map(videoDTO -> fromVideoDTO(videoDTO, channelEntity)).collect(Collectors.toList());
         videoRepository.saveAll(videos);

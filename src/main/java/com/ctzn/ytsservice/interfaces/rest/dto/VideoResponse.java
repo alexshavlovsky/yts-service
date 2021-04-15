@@ -14,4 +14,5 @@ public class VideoResponse {
     public Date publishedDate;
     public int viewCountText;
     public Integer totalCommentCount;
+    public String shortStatus;
 }

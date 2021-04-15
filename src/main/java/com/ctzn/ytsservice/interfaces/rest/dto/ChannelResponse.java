@@ -9,4 +9,5 @@ public class ChannelResponse {
     public String title;
     public int videoCount;
     public long subscriberCount;
+    public String shortStatus;
 }

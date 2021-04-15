@@ -44,6 +44,10 @@ public class VideoEntity extends Auditable {
         return channel.getTitle();
     }
 
+    public String getShortStatus() {
+        return contextStatus.statusCode.name();
+    }
+
     public static VideoEntity fromVideoDTO(VideoDTO dto, ChannelEntity channel) {
         return new VideoEntity(
                 dto.getVideoId(),

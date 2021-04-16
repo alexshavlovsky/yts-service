@@ -11,6 +11,10 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
 
     Page<VideoEntity> findAllByTitleContainingIgnoreCase(String title, Pageable pageable);
 
+    Page<VideoEntity> findAllByChannel_channelId(String channelId, Pageable pageable);
+
+    Page<VideoEntity> findAllByChannel_channelIdAndTitleContainingIgnoreCase(String channelId, String title, Pageable pageable);
+
     Page<VideoEntity> nativeFts(String query, Pageable pageable);
 
 }

@@ -42,6 +42,7 @@ public class ChannelController {
     public ResponseEntity<ChannelSummaryResponse> getChannelSummary(@Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
         ChannelSummaryResponse channelSummary = channelService.getChannelSummary(channelId);
+        if (channelSummary == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok().body(channelSummary);
     }
 
@@ -58,12 +59,12 @@ public class ChannelController {
     }
 
     @DeleteMapping("{channelId}")
-    public ResponseEntity<String> deleteChannel(@Valid ChannelIdRequest dto) {
+    public ResponseEntity<ChannelIdRequest> deleteChannel(@Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
         log.info("Delete a channel: " + channelId);
         channelService.deleteChannel(channelId);
         log.info("OK deleting a channel: " + channelId);
-        return ResponseEntity.ok().body(channelId);
+        return ResponseEntity.ok().body(dto);
     }
 
 }

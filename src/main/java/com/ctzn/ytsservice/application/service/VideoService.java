@@ -19,7 +19,7 @@ public class VideoService {
         this.sortColumnNamesAdapter = sortColumnNamesAdapter;
     }
 
-    public Page<VideoEntity> getChannels(String rawQuery, Pageable pageable, boolean optimize) {
+    public Page<VideoEntity> getVideos(String rawQuery, Pageable pageable, boolean optimize) {
         boolean noFiltering = rawQuery == null || rawQuery.isEmpty() || rawQuery.isBlank();
         if (optimize) {
             return noFiltering ?
@@ -30,6 +30,12 @@ public class VideoService {
                     repository.findAll(pageable) :
                     repository.findAllByTitleContainingIgnoreCase(rawQuery, pageable);
         }
+    }
+
+    public Page<VideoEntity> getVideosByChannel(String channelId, String text, Pageable pageable) {
+        return text == null ?
+                repository.findAllByChannel_channelId(channelId, pageable) :
+                repository.findAllByChannel_channelIdAndTitleContainingIgnoreCase(channelId, text, pageable);
     }
 
 }

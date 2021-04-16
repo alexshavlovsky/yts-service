@@ -26,8 +26,13 @@ public class VideoController {
     }
 
     @GetMapping()
-    public ResponseEntity<PagedResponse<VideoResponse>> findByTextContaining(@RequestParam(value = "text", required = false) String text, Pageable pageable) {
-        Page<VideoEntity> page = videoService.getChannels(text, pageable, false);
+    public ResponseEntity<PagedResponse<VideoResponse>> findByTextContaining(
+            @RequestParam(value = "text", required = false) String text,
+            @RequestParam(value = "channelId", required = false) String channelId,
+            Pageable pageable) {
+        Page<VideoEntity> page = channelId != null ?
+                videoService.getVideosByChannel(channelId, text, pageable) :
+                videoService.getVideos(text, pageable, false);
         return ResponseEntity.ok().body(domainMapper.fromVideoPageToPagedResponse(page));
     }
 

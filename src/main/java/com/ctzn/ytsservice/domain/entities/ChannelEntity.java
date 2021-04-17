@@ -55,8 +55,8 @@ public class ChannelEntity extends Auditable {
     public static ChannelEntity newPendingChannel(String channelId) {
         return new ChannelEntity(
                 channelId,
-                channelId,
                 null,
+                channelId,
                 null,
                 null,
                 Collections.emptyList(),

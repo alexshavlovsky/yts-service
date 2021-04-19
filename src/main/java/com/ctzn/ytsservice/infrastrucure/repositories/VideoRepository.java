@@ -3,6 +3,7 @@ package com.ctzn.ytsservice.infrastrucure.repositories;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -16,5 +17,8 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
     Page<VideoEntity> findAllByChannel_channelIdAndTitleContainingIgnoreCase(String channelId, String title, Pageable pageable);
 
     Page<VideoEntity> nativeFts(String query, Pageable pageable);
+
+    @Query(value = "SELECT sum(total_comment_count) from videos where channel_id = ?1", nativeQuery = true)
+    int countComments(String channelId);
 
 }

@@ -13,4 +13,12 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
 
     Page<CommentEntity> nativeFts(String query, Pageable pageable);
 
+    long countByVideo_Channel_channelId(String channelId);
+
+    long countByVideo_videoId(String videoId);
+
+    Page<CommentEntity> findAllByVideo_videoId(String videoId, Pageable pageable);
+
+    Page<CommentEntity> findAllByVideo_videoIdAndTextContainingIgnoreCase(String videoId, String text, Pageable pageable);
+
 }

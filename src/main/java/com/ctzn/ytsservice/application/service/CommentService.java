@@ -32,4 +32,11 @@ public class CommentService {
         }
     }
 
+
+    public Page<CommentEntity> getCommentsByVideo(String videoId, String text, Pageable pageable) {
+        return text == null ?
+                repository.findAllByVideo_videoId(videoId, pageable) :
+                repository.findAllByVideo_videoIdAndTextContainingIgnoreCase(videoId, text, pageable);
+    }
+
 }

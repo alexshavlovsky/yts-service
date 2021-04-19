@@ -1,11 +1,14 @@
 package com.ctzn.ytsservice.application.service;
 
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
-import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import com.ctzn.ytsservice.domain.entities.WorkerLogEntity;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.WorkerLogRepository;
-import com.ctzn.ytsservice.interfaces.rest.dto.*;
+import com.ctzn.ytsservice.interfaces.rest.dto.ChannelDetailedResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.ChannelSummaryResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.WorkerLogResponse;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
 import com.ctzn.ytsservice.interfaces.rest.transform.SortColumnNamesAdapter;
 import org.springframework.data.domain.Page;
@@ -20,12 +23,16 @@ import java.util.stream.Collectors;
 public class ChannelService {
 
     private ChannelRepository repository;
+    private CommentRepository commentRepository;
+    private VideoRepository videoRepository;
     private WorkerLogRepository workerLogRepository;
     private SortColumnNamesAdapter sortColumnNamesAdapter;
     private ObjectAssembler objectAssembler;
 
-    public ChannelService(ChannelRepository repository, WorkerLogRepository workerLogRepository, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
+    public ChannelService(ChannelRepository repository, CommentRepository commentRepository, VideoRepository videoRepository, WorkerLogRepository workerLogRepository, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
         this.repository = repository;
+        this.commentRepository = commentRepository;
+        this.videoRepository = videoRepository;
         this.workerLogRepository = workerLogRepository;
         this.sortColumnNamesAdapter = sortColumnNamesAdapter;
         this.objectAssembler = objectAssembler;
@@ -51,13 +58,12 @@ public class ChannelService {
     public ChannelSummaryResponse getChannelSummary(String channelId) {
         ChannelEntity channelEntity = repository.findById(channelId).orElse(null);
         if (channelEntity == null) return null;
-        List<WorkerLogEntity> workerLogEntities = workerLogRepository.getAllByContextId(channelId);
         ChannelDetailedResponse channel = objectAssembler.map(channelEntity, ChannelDetailedResponse.class);
-        List<VideoEntity> videoEntities = channelEntity.getVideos();
-        List<VideoDetailedResponse> videos = videoEntities.stream().map(ve -> objectAssembler.map(ve, VideoDetailedResponse.class)).collect(Collectors.toList());
+        List<WorkerLogEntity> workerLogEntities = workerLogRepository.getAllByContextId(channelId);
         List<WorkerLogResponse> log = workerLogEntities.stream().map(wl -> objectAssembler.map(wl, WorkerLogResponse.class)).collect(Collectors.toList());
-        int totalComments = videos.stream().filter(v -> v.getTotalCommentCount() != null).mapToInt(VideoResponse::getTotalCommentCount).sum();
-        return new ChannelSummaryResponse(channel, videos, log, totalComments);
+        //int totalComments = (int) commentRepository.countByVideo_Channel_channelId(channelId); // join and count version (slower version)
+        int totalComments = videoRepository.countComments(channelId); // aggregate version (faster version)
+        return new ChannelSummaryResponse(channel, log, totalComments);
     }
 
 }

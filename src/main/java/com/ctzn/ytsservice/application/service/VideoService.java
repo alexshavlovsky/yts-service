@@ -64,4 +64,8 @@ public class VideoService {
         return new VideoSummaryResponse(video, log, totalComments);
     }
 
+    public void deleteVideo(String videoId) {
+        repository.deleteById(videoId);
+    }
+
 }

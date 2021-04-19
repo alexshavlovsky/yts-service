@@ -62,7 +62,8 @@ public class ChannelService {
         List<WorkerLogEntity> workerLogEntities = workerLogRepository.getAllByContextId(channelId);
         List<WorkerLogResponse> log = workerLogEntities.stream().map(wl -> objectAssembler.map(wl, WorkerLogResponse.class)).collect(Collectors.toList());
         //int totalComments = (int) commentRepository.countByVideo_Channel_channelId(channelId); // join and count version (slower version)
-        int totalComments = videoRepository.countComments(channelId); // aggregate version (faster version)
+        Integer totalComments = videoRepository.countComments(channelId); // aggregate version (faster version)
+        if (totalComments == null) totalComments = 0;
         return new ChannelSummaryResponse(channel, log, totalComments);
     }
 

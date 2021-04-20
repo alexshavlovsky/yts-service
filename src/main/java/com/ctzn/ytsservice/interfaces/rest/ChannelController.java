@@ -3,7 +3,7 @@ package com.ctzn.ytsservice.interfaces.rest;
 import com.ctzn.ytsservice.application.service.ChannelService;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
-import com.ctzn.ytsservice.interfaces.rest.dto.ChannelIdRequest;
+import com.ctzn.ytsservice.interfaces.rest.dto.validation.ChannelIdRequest;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelSummaryResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;

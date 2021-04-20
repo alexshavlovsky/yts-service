@@ -12,13 +12,9 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
 
     Page<VideoEntity> findAllByTitleContainingIgnoreCase(String title, Pageable pageable);
 
-    Page<VideoEntity> findAllByChannel_channelId(String channelId, Pageable pageable);
-
-    Page<VideoEntity> findAllByChannel_channelIdAndTitleContainingIgnoreCase(String channelId, String title, Pageable pageable);
-
     Page<VideoEntity> nativeFts(String query, Pageable pageable);
 
     @Query(value = "SELECT sum(total_comment_count) from videos where channel_id = ?1", nativeQuery = true)
-    Integer countComments(String channelId);
+    Long countComments(String channelId);
 
 }

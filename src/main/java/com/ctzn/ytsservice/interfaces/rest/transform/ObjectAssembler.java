@@ -1,5 +1,6 @@
 package com.ctzn.ytsservice.interfaces.rest.transform;
 
+import com.ctzn.ytsservice.interfaces.rest.dto.UserProjection;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.CommentEntity;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
@@ -52,6 +53,9 @@ public class ObjectAssembler {
     private static final Type PAGED_VIDEO_RESPONSE = new TypeToken<PagedResponse<VideoResponse>>() {
     }.getType();
 
+    private static final Type PAGED_USER_RESPONSE = new TypeToken<PagedResponse<UserProjection>>() {
+    }.getType();
+
     // GENERIC MAPPERS
     public PagedResponse<CommentResponse> fromCommentPageToPagedResponse(Page<CommentEntity> page) {
         return map(page, PAGED_COMMENT_RESPONSE);
@@ -63,6 +67,10 @@ public class ObjectAssembler {
 
     public PagedResponse<VideoResponse> fromVideoPageToPagedResponse(Page<VideoEntity> page) {
         return map(page, PAGED_VIDEO_RESPONSE);
+    }
+
+    public PagedResponse<UserProjection> fromUserPageToPagedResponse(Page<UserProjection> page) {
+        return map(page, PAGED_USER_RESPONSE);
     }
 
 }

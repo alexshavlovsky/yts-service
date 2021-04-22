@@ -1,0 +1,5 @@
+### Get comments paged query
+GET {{api-url}}/users?page=0&size=10&sort=commentedVideoCount,desc
+Accept: application/json
+
+###

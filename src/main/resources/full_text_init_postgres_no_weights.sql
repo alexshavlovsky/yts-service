@@ -1,4 +1,6 @@
--- init the native full text search on the comments table
+-- temporary disable triggers
+-- ALTER TABLE comments DISABLE TRIGGER all;
+-- ALTER TABLE comments ENABLE TRIGGER all;
 
 -- --------------------------------------------------
 --                    COMMENTS
@@ -18,13 +20,13 @@ CREATE INDEX comments_tsv_idx
         USING GIN (tsv);
 
 -- create a trigger function
-CREATE FUNCTION comments_tsv_trigger() RETURNS trigger AS
-$$
+DROP FUNCTION IF EXISTS comments_tsv_trigger();
+CREATE FUNCTION comments_tsv_trigger() RETURNS trigger AS '
 begin
-    new.tsv := to_tsvector(coalesce(new.text, '') || ' ' || coalesce(new.author_text, ''));
+    new.tsv := to_tsvector(coalesce(new.text, '''') || '' '' || coalesce(new.author_text, ''''));
     return new;
-end
-$$ LANGUAGE plpgsql;
+end;
+' LANGUAGE plpgsql;
 
 -- create a trigger
 CREATE TRIGGER comments_tsv_update
@@ -32,10 +34,6 @@ CREATE TRIGGER comments_tsv_update
     ON comments
     FOR EACH ROW
 EXECUTE PROCEDURE comments_tsv_trigger();
-
--- temporary disable triggers
--- ALTER TABLE comments DISABLE TRIGGER all;
--- ALTER TABLE comments ENABLE TRIGGER all;
 
 -- --------------------------------------------------
 --                    CHANNELS
@@ -55,13 +53,13 @@ CREATE INDEX channels_tsv_idx
         USING GIN (tsv);
 
 -- create a trigger function
-CREATE FUNCTION channels_tsv_trigger() RETURNS trigger AS
-$$
+DROP FUNCTION IF EXISTS channels_tsv_trigger();
+CREATE FUNCTION channels_tsv_trigger() RETURNS trigger AS '
 begin
-    new.tsv := to_tsvector(coalesce(new.title, '') || ' ' || coalesce(new.channel_vanity_name, ''));
+    new.tsv := to_tsvector(coalesce(new.title, '''') || '' '' || coalesce(new.channel_vanity_name, ''''));
     return new;
-end
-$$ LANGUAGE plpgsql;
+end;
+' LANGUAGE plpgsql;
 
 -- create a trigger
 CREATE TRIGGER channels_tsv_update
@@ -88,13 +86,13 @@ CREATE INDEX videos_tsv_idx
         USING GIN (tsv);
 
 -- create a trigger function
-CREATE FUNCTION videos_tsv_trigger() RETURNS trigger AS
-$$
+DROP FUNCTION IF EXISTS videos_tsv_trigger();
+CREATE FUNCTION videos_tsv_trigger() RETURNS trigger AS '
 begin
-    new.tsv := to_tsvector(coalesce(new.title, ''));
+    new.tsv := to_tsvector(coalesce(new.title, ''''));
     return new;
-end
-$$ LANGUAGE plpgsql;
+end;
+' LANGUAGE plpgsql;
 
 -- create a trigger
 CREATE TRIGGER videos_tsv_update

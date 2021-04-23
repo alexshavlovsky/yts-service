@@ -21,6 +21,7 @@ import java.util.List;
 public class VideoEntity extends Auditable {
     @Id
     @EqualsAndHashCode.Include
+    @Column(length = 11)
     String videoId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "channel_id")

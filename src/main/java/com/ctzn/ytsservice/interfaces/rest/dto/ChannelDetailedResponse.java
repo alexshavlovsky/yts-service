@@ -11,5 +11,6 @@ public class ChannelDetailedResponse extends ChannelResponse {
     private Date createdDate;
     private Date lastUpdatedDate;
     public Integer fetchedVideoCount;
+    public Integer doneVideoCount;
     public ContextStatusResponse contextStatus;
 }

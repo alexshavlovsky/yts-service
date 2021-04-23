@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
-@Table(name = "comments")
+@Table(name = "comments", indexes = {@Index(columnList = "video_id,channelId,authorText"), @Index(columnList = "channelId,authorText"), @Index(columnList = "channelId")})
 public class CommentEntity extends Auditable {
     @Id
     @EqualsAndHashCode.Include

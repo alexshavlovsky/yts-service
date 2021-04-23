@@ -21,6 +21,7 @@ import java.util.List;
 public class ChannelEntity extends Auditable {
     @Id
     @EqualsAndHashCode.Include
+    @Column(length = 24)
     public String channelId;
     public String channelVanityName;
     public String title;

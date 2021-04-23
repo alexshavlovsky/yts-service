@@ -14,6 +14,9 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
 
     Page<VideoEntity> nativeFts(String query, Pageable pageable);
 
+    @Query(value = "SELECT count(1) from videos where channel_id = ?1 and status_code = 3", nativeQuery = true)
+    Integer countDoneVideos(String channelId);
+
     @Query(value = "SELECT sum(total_comment_count) from videos where channel_id = ?1", nativeQuery = true)
     Long countComments(String channelId);
 

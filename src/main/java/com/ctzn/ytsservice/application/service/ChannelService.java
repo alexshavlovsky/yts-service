@@ -50,6 +50,7 @@ public class ChannelService {
         ChannelEntity channelEntity = repository.findById(channelId).orElse(null);
         if (channelEntity == null) return null;
         ChannelDetailedResponse channel = objectAssembler.map(channelEntity, ChannelDetailedResponse.class);
+        channel.setDoneVideoCount(videoRepository.countDoneVideos(channelId));
         //int totalComments = (int) commentRepository.countByVideo_Channel_channelId(channelId); // join and count version (slower version)
         Long totalComments = videoRepository.countComments(channelId); // aggregate version (faster version)
         if (totalComments == null) totalComments = 0L;

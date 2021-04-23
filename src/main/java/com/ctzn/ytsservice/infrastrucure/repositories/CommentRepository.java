@@ -35,13 +35,37 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
             "sum(like_count) as like_count,\n" +
             "sum(reply_count) as reply_count\n" +
             "FROM comments\n" +
-            "GROUP BY (video_id, channel_id)\n" +
-            ")\n" +
-            "GROUP BY userId\n"
-            , countQuery = "select count(1) from (select distinct channel_id from comments)"
+            "GROUP BY (video_id, channel_id, author_text)\n" +
+            ") as sub\n" +
+            "GROUP BY (userId, userTitle)\n"
+            , countQuery = "select count(1) from (select distinct channel_id from comments) as sub"
             , nativeQuery = true)
     Page<UserProjection> getUsers(Pageable pageable);
 
+    @Query(value = "" +
+            "SELECT\n" +
+            "user_id as userId,\n" +
+            "user_title as userTitle,\n" +
+            "count(1) as commentedVideoCount,\n" +
+            "sum(comment_count) as commentCount,\n" +
+            "sum(like_count) as likeCount,\n" +
+            "sum(reply_count) as replyCount\n" +
+            "FROM (\n" +
+            "SELECT\n" +
+            "video_id,\n" +
+            "channel_id as user_id,\n" +
+            "author_text as user_title,\n" +
+            "count(1) as comment_count,\n" +
+            "sum(like_count) as like_count,\n" +
+            "sum(reply_count) as reply_count\n" +
+            "FROM comments\n" +
+            "WHERE LOWER(author_text) like CONCAT('%',LOWER(?1),'%')" +
+            "GROUP BY (video_id, channel_id, author_text)\n" +
+            ") as sub\n" +
+            "GROUP BY (userId, userTitle)\n"
+            , countQuery = "select count(1) from (select distinct channel_id from comments where LOWER(author_text) like CONCAT('%',LOWER(?1),'%')) as sub"
+            , nativeQuery = true)
+    Page<UserProjection> getUsers(String text, Pageable pageable);
 }
 
 // sub query: users per video commented at least once
@@ -117,3 +141,31 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
 // GROUP BY user_id
 // HAVING commented_video_count > 1
 // ORDER BY commented_video_count DESC
+
+// known names list
+//    SELECT T.author_text as known_as, min(T.published_date) as first_seen, max(T.published_date) as last_seen
+//        FROM comments AS T
+//        WHERE T.channel_id = 'UCC_J43KR0LEluXM85OBm9nQ'
+//        group by T.author_text
+//        order by last_seen
+
+
+
+//    CREATE TABLE authors (author_id, author_text)
+//    AS (select distinct channel_id as author_id, author_text from comments)
+
+//    CREATE TABLE authors (channel_id, author_text)as
+//(select channel_id,
+//        (SELECT STRING_AGG(U.author_text, ',,,') as author_text
+//        FROM
+//        (
+//        SELECT DISTINCT T.author_text
+//        FROM comments AS T
+//        WHERE T.channel_id = S.channel_id
+//        ) AS U)
+//        -- STRING_AGG(author_text,';')
+//
+//        from comments as S group by (channel_id))
+
+//select * from authors where author_text like '%,,,%'
+

@@ -1,6 +1,11 @@
 package com.ctzn.ytsservice.application.service;
 
+import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
+import com.ctzn.youtubescraper.core.persistence.dto.VideoDTO;
+import com.ctzn.ytsservice.domain.entities.ChannelEntity;
+import com.ctzn.ytsservice.domain.entities.ContextStatus;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
+import com.ctzn.ytsservice.domain.entities.VideoNaturalId;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
 import com.ctzn.ytsservice.interfaces.rest.dto.VideoDetailedResponse;
@@ -11,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class VideoService {
@@ -42,8 +49,26 @@ public class VideoService {
         }
     }
 
+    public VideoEntity createOrUpdateAndGet(VideoDTO videoDTO, ChannelEntity channel) {
+        String videoId = videoDTO.getVideoId();
+        ContextStatus contextStatus = new ContextStatus(StatusCode.METADATA_FETCHED);
+        VideoEntity persistentVideo = repository.findByNaturalId_videoId(videoId).orElse(null);
+        if (persistentVideo == null) {
+            return VideoEntity.fromVideoDTO(
+                    new VideoNaturalId(null, videoId),
+                    videoDTO,
+                    channel,
+                    contextStatus
+            );
+        } else {
+            objectAssembler.map(videoDTO, persistentVideo);
+            objectAssembler.map(contextStatus, persistentVideo.getContextStatus());
+            return persistentVideo;
+        }
+    }
+
     public VideoSummaryResponse getVideoSummary(String videoId) {
-        VideoEntity videoEntity = repository.findById(videoId).orElse(null);
+        VideoEntity videoEntity = repository.findByNaturalId_videoId(videoId).orElse(null);
         if (videoEntity == null) return null;
         VideoDetailedResponse video = objectAssembler.map(videoEntity, VideoDetailedResponse.class);
         Long totalComments = commentRepository.countComments(videoId);
@@ -52,7 +77,19 @@ public class VideoService {
     }
 
     public void deleteVideo(String videoId) {
-        repository.deleteById(videoId);
+        repository.deleteByNaturalId_videoId(videoId);
+    }
+
+    public void saveAll(List<VideoEntity> videos) {
+        repository.saveAll(videos);
+    }
+
+    public VideoEntity getById(String videoId) {
+        return repository.findByNaturalId_videoId(videoId).orElse(null);
+    }
+
+    public void save(VideoEntity videoEntity) {
+        repository.save(videoEntity);
     }
 
 }

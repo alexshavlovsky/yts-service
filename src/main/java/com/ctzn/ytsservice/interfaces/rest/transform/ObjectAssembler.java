@@ -29,6 +29,11 @@ public class ObjectAssembler {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
+    public <S, D> D map(final S source, D destination) {
+        modelMapper.map(source, destination);
+        return destination;
+    }
+
     public <D, T> D map(final T entity, Class<D> outClass) {
         return modelMapper.map(entity, outClass);
     }

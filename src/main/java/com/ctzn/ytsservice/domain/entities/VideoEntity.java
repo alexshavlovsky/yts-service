@@ -19,10 +19,17 @@ import java.util.List;
 @Entity
 @Table(name = "videos")
 public class VideoEntity extends Auditable {
+
     @Id
     @EqualsAndHashCode.Include
-    @Column(length = 11)
-    String videoId;
+    public Long id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "video_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public VideoNaturalId naturalId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "channel_id")
     ChannelEntity channel;
@@ -38,7 +45,7 @@ public class VideoEntity extends Auditable {
     Integer totalCommentCount;
 
     public String getChannelId() {
-        return channel.getChannelId();
+        return channel.getNaturalId().getChannelId();
     }
 
     public String getChannelTitle() {
@@ -49,17 +56,19 @@ public class VideoEntity extends Auditable {
         return contextStatus.statusCode.name();
     }
 
-    public static VideoEntity fromVideoDTO(VideoDTO dto, ChannelEntity channel) {
+    public static VideoEntity fromVideoDTO(VideoNaturalId publicId, VideoDTO dto, ChannelEntity channel, ContextStatus contextStatus) {
         return new VideoEntity(
-                dto.getVideoId(),
+                publicId.getId(),
+                publicId,
                 channel,
                 dto.getTitle(),
                 dto.getPublishedTimeText(),
                 dto.getPublishedDate(),
                 dto.getViewCountText(),
                 Collections.emptyList(),
-                new ContextStatus(StatusCode.METADATA_FETCHED),
+                contextStatus,
                 null
         );
     }
+
 }

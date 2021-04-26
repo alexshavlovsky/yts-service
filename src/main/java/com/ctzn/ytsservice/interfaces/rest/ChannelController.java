@@ -2,11 +2,10 @@ package com.ctzn.ytsservice.interfaces.rest;
 
 import com.ctzn.ytsservice.application.service.ChannelService;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
-import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
-import com.ctzn.ytsservice.interfaces.rest.dto.validation.ChannelIdRequest;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelSummaryResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.validation.ChannelIdRequest;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
@@ -23,12 +22,10 @@ import javax.validation.Valid;
 public class ChannelController {
 
     private ChannelService channelService;
-    private ChannelRepository channelRepository;
     private ObjectAssembler domainMapper;
 
-    public ChannelController(ChannelService channelService, ChannelRepository channelRepository, ObjectAssembler domainMapper) {
+    public ChannelController(ChannelService channelService, ObjectAssembler domainMapper) {
         this.channelService = channelService;
-        this.channelRepository = channelRepository;
         this.domainMapper = domainMapper;
     }
 
@@ -49,18 +46,22 @@ public class ChannelController {
     @PostMapping("")
     public ResponseEntity<ChannelIdRequest> addChannel(@RequestBody @Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
-        if (channelRepository.findById(channelId).isPresent()) {
+        if (channelService.isChannelExist(channelId)) {
             log.warning("Channel already exists: " + channelId);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         log.info("Add a pending channel: " + channelId);
-        channelRepository.save(ChannelEntity.newPendingChannel(channelId));
+        channelService.newPendingChannel(channelId);
         return ResponseEntity.accepted().body(dto);
     }
 
     @DeleteMapping("{channelId}")
     public ResponseEntity<ChannelIdRequest> deleteChannel(@Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
+        if (!channelService.isChannelExist(channelId)) {
+            log.warning("Channel not fount: " + channelId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         log.info("Delete a channel: " + channelId);
         channelService.deleteChannel(channelId);
         log.info("OK deleting a channel: " + channelId);

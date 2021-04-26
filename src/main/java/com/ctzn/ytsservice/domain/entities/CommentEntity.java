@@ -41,7 +41,7 @@ public class CommentEntity extends Auditable {
     List<CommentEntity> replies;
 
     public String getVideoId() {
-        return video.getVideoId();
+        return video.getNaturalId().getVideoId();
     }
 
     public String getVideoTitle() {

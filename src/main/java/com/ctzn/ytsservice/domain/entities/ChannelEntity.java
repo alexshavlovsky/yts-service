@@ -21,8 +21,14 @@ import java.util.List;
 public class ChannelEntity extends Auditable {
     @Id
     @EqualsAndHashCode.Include
-    @Column(length = 24)
-    public String channelId;
+    public Long id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "channel_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public ChannelNaturalId naturalId;
+
     public String channelVanityName;
     public String title;
     public Integer videoCount;
@@ -33,6 +39,10 @@ public class ChannelEntity extends Auditable {
     @Embedded
     ContextStatus contextStatus;
 
+    public String getChannelId() {
+        return naturalId.getChannelId();
+    }
+
     public Integer getFetchedVideoCount() {
         return videos.size();
     }
@@ -41,9 +51,10 @@ public class ChannelEntity extends Auditable {
         return contextStatus.statusCode.name();
     }
 
-    public static ChannelEntity fromChannelDTO(ChannelDTO dto, ContextStatus contextStatus) {
+    public static ChannelEntity fromChannelDTO(ChannelNaturalId publicId, ChannelDTO dto, ContextStatus contextStatus) {
         return new ChannelEntity(
-                dto.getChannelId(),
+                null,
+                publicId,
                 dto.getChannelVanityName(),
                 dto.getTitle(),
                 dto.getVideoCount(),
@@ -53,11 +64,12 @@ public class ChannelEntity extends Auditable {
         );
     }
 
-    public static ChannelEntity newPendingChannel(String channelId) {
+    public static ChannelEntity newPendingChannel(ChannelNaturalId publicId) {
         return new ChannelEntity(
-                channelId,
                 null,
-                channelId,
+                publicId,
+                null,
+                publicId.getChannelId(),
                 null,
                 null,
                 Collections.emptyList(),

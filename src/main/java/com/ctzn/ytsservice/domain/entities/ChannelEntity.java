@@ -19,6 +19,7 @@ import java.util.List;
 @ToString(exclude = "videos")
 @Table(name = "channels")
 public class ChannelEntity extends Auditable {
+
     @Id
     @EqualsAndHashCode.Include
     public Long id;

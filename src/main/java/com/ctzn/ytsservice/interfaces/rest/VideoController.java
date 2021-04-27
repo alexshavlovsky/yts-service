@@ -25,9 +25,9 @@ import javax.validation.Valid;
 @RequestMapping("/api/videos")
 public class VideoController {
 
-    private VideoService videoService;
-    private ObjectAssembler domainMapper;
-    private GenericCriteriaBuilder queryBuilder;
+    private final VideoService videoService;
+    private final ObjectAssembler domainMapper;
+    private final GenericCriteriaBuilder queryBuilder;
 
     public VideoController(VideoService videoService, ObjectAssembler domainMapper, GenericCriteriaBuilder queryBuilder) {
         this.videoService = videoService;
@@ -42,7 +42,7 @@ public class VideoController {
     }
 
     @GetMapping("{videoId}")
-    public ResponseEntity<VideoSummaryResponse> getChannelSummary(@Valid VideoIdRequest dto) {
+    public ResponseEntity<VideoSummaryResponse> getVideoSummary(@Valid VideoIdRequest dto) {
         String videoId = dto.getVideoId();
         VideoSummaryResponse videoSummary = videoService.getVideoSummary(videoId);
         if (videoId == null) return ResponseEntity.notFound().build();
@@ -52,9 +52,9 @@ public class VideoController {
     @DeleteMapping("{videoId}")
     public ResponseEntity<VideoIdRequest> deleteVideo(@Valid VideoIdRequest dto) {
         String videoId = dto.getVideoId();
-        log.info("Delete a video: " + videoId);
-        videoService.deleteVideo(videoId);
-        log.info("OK deleting a video: " + videoId);
+        log.info("Deleting a video: " + videoId);
+        videoService.deleteById(videoId);
+        log.info("Deleted a video: " + videoId);
         return ResponseEntity.ok().body(dto);
     }
 

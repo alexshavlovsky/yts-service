@@ -1,6 +1,5 @@
 package com.ctzn.ytsservice.domain.entities;
 
-import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.youtubescraper.core.persistence.dto.VideoDTO;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -17,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
+@ToString(exclude = "comments")
 @Table(name = "videos")
 public class VideoEntity extends Auditable {
 
@@ -43,6 +43,10 @@ public class VideoEntity extends Auditable {
     @Embedded
     ContextStatus contextStatus;
     Integer totalCommentCount;
+
+    public String getVideoId() {
+        return naturalId.getVideoId();
+    }
 
     public String getChannelId() {
         return channel.getNaturalId().getChannelId();

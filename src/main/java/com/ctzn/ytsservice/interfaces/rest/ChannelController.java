@@ -21,8 +21,8 @@ import javax.validation.Valid;
 @Log
 public class ChannelController {
 
-    private ChannelService channelService;
-    private ObjectAssembler domainMapper;
+    private final ChannelService channelService;
+    private final ObjectAssembler domainMapper;
 
     public ChannelController(ChannelService channelService, ObjectAssembler domainMapper) {
         this.channelService = channelService;
@@ -46,25 +46,25 @@ public class ChannelController {
     @PostMapping("")
     public ResponseEntity<ChannelIdRequest> addChannel(@RequestBody @Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
-        if (channelService.isChannelExist(channelId)) {
+        if (channelService.isExistById(channelId)) {
             log.warning("Channel already exists: " + channelId);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        log.info("Add a pending channel: " + channelId);
         channelService.newPendingChannel(channelId);
+        log.info("Added a pending channel: " + channelId);
         return ResponseEntity.accepted().body(dto);
     }
 
     @DeleteMapping("{channelId}")
     public ResponseEntity<ChannelIdRequest> deleteChannel(@Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
-        if (!channelService.isChannelExist(channelId)) {
+        if (!channelService.isExistById(channelId)) {
             log.warning("Channel not fount: " + channelId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        log.info("Delete a channel: " + channelId);
+        log.info("Deleting a channel: " + channelId);
         channelService.deleteChannel(channelId);
-        log.info("OK deleting a channel: " + channelId);
+        log.info("Deleted a channel: " + channelId);
         return ResponseEntity.ok().body(dto);
     }
 

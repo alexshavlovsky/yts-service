@@ -1,3 +1,12 @@
+### Add a pending channel
+POST {{api-url}}/channels
+Accept: application/json
+Content-Type: application/json
+
+{
+  "channelId": "UCksTNgiRyQGwi2ODBie8HdA"
+}
+
 ### Get channels paged query
 GET {{api-url}}/channels?text=adam&page=0&size=10&sort=videoCount,desc
 Accept: application/json

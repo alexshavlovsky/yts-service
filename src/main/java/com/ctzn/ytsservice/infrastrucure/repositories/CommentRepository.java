@@ -15,8 +15,7 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
 
     Page<CommentEntity> nativeFts(String query, Pageable pageable);
 
-    @Query(value = "SELECT count(1) from comments where video_id = ?1", nativeQuery = true)
-    Long countComments(String videoId);
+    long countByVideo_naturalId_videoId(String videoId);
 
     @Query(value = "" +
             "SELECT\n" +
@@ -148,7 +147,6 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
 //        WHERE T.channel_id = 'UCC_J43KR0LEluXM85OBm9nQ'
 //        group by T.author_text
 //        order by last_seen
-
 
 
 //    CREATE TABLE authors (author_id, author_text)

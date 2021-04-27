@@ -17,7 +17,8 @@ public class VideoQueryRequest implements Predicateable<VideoEntity> {
 
     public Predicate[] toPredicates(CriteriaBuilder cb, Root<VideoEntity> root) {
         List<Predicate> predicates = new ArrayList<>();
-        if (channelId != null) predicates.add(cb.equal(root.get("channel").get("channelId"), channelId));
+        if (channelId != null)
+            predicates.add(cb.equal(root.get("channel").get("naturalId").get("channelId"), channelId));
         if (text != null) predicates.add(cb.like(cb.lower(root.get("title")), "%" + text.toLowerCase() + "%"));
         return predicates.toArray(Predicate[]::new);
     }

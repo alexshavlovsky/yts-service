@@ -91,7 +91,7 @@ public class PersistenceServiceImpl implements PersistenceService {
     public void setVideoStatus(String videoId, ContextStatusDTO status) {
         VideoEntity videoEntity = videoService.getById(videoId);
         if (videoEntity == null) {
-            log.warning("Can't save comments. The parent video doesn't exist: " + videoId);
+            log.warning("Can't save comments. The video doesn't exist: " + videoId);
             return;
         }
         videoEntity.setContextStatus(ContextStatus.fromContextStatusDTO(status));

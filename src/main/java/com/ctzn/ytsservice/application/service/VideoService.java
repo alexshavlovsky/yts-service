@@ -22,14 +22,14 @@ import java.util.List;
 @Component
 public class VideoService {
 
-    private VideoRepository repository;
+    private VideoRepository videoRepository;
     private CommentRepository commentRepository;
     private WorkerLogService workerLogService;
     private SortColumnNamesAdapter sortColumnNamesAdapter;
     private ObjectAssembler objectAssembler;
 
-    public VideoService(VideoRepository repository, CommentRepository commentRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
-        this.repository = repository;
+    public VideoService(VideoRepository videoRepository, CommentRepository commentRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
+        this.videoRepository = videoRepository;
         this.commentRepository = commentRepository;
         this.workerLogService = workerLogService;
         this.sortColumnNamesAdapter = sortColumnNamesAdapter;
@@ -40,22 +40,22 @@ public class VideoService {
         boolean noFiltering = rawQuery == null || rawQuery.isEmpty() || rawQuery.isBlank();
         if (optimize) {
             return noFiltering ?
-                    repository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize())) :
-                    repository.nativeFts(rawQuery, sortColumnNamesAdapter.adapt(pageable, VideoEntity.class));
+                    videoRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize())) :
+                    videoRepository.nativeFts(rawQuery, sortColumnNamesAdapter.adapt(pageable, VideoEntity.class));
         } else {
             return noFiltering ?
-                    repository.findAll(pageable) :
-                    repository.findAllByTitleContainingIgnoreCase(rawQuery, pageable);
+                    videoRepository.findAll(pageable) :
+                    videoRepository.findAllByTitleContainingIgnoreCase(rawQuery, pageable);
         }
     }
 
     public VideoEntity createOrUpdateAndGet(VideoDTO videoDTO, ChannelEntity channel) {
         String videoId = videoDTO.getVideoId();
         ContextStatus contextStatus = new ContextStatus(StatusCode.METADATA_FETCHED);
-        VideoEntity persistentVideo = repository.findByNaturalId_videoId(videoId).orElse(null);
+        VideoEntity persistentVideo = videoRepository.findByNaturalId_videoId(videoId).orElse(null);
         if (persistentVideo == null) {
             return VideoEntity.fromVideoDTO(
-                    new VideoNaturalId(null, videoId),
+                    VideoNaturalId.newFromPublicId(videoId),
                     videoDTO,
                     channel,
                     contextStatus
@@ -68,28 +68,32 @@ public class VideoService {
     }
 
     public VideoSummaryResponse getVideoSummary(String videoId) {
-        VideoEntity videoEntity = repository.findByNaturalId_videoId(videoId).orElse(null);
+        VideoEntity videoEntity = videoRepository.findByNaturalId_videoId(videoId).orElse(null);
         if (videoEntity == null) return null;
         VideoDetailedResponse video = objectAssembler.map(videoEntity, VideoDetailedResponse.class);
-        Long totalComments = commentRepository.countComments(videoId);
-        if (totalComments == null) totalComments = 0L;
-        return new VideoSummaryResponse(video, workerLogService.getByContextId(videoId), totalComments.intValue());
+        long totalComments = commentRepository.countByVideo_naturalId_videoId(videoId);
+        return new VideoSummaryResponse(video, workerLogService.getByContextId(videoId), (int) totalComments);
     }
 
-    public void deleteVideo(String videoId) {
-        repository.deleteByNaturalId_videoId(videoId);
+
+    public void save(VideoEntity videoEntity) {
+        videoRepository.save(videoEntity);
     }
 
     public void saveAll(List<VideoEntity> videos) {
-        repository.saveAll(videos);
+        videoRepository.saveAll(videos);
     }
 
     public VideoEntity getById(String videoId) {
-        return repository.findByNaturalId_videoId(videoId).orElse(null);
+        return videoRepository.findByNaturalId_videoId(videoId).orElse(null);
     }
 
-    public void save(VideoEntity videoEntity) {
-        repository.save(videoEntity);
+    public boolean isExistById(String channelId) {
+        return getById(channelId) != null;
+    }
+
+    public void deleteById(String videoId) {
+        videoRepository.deleteByNaturalId_videoId(videoId);
     }
 
 }

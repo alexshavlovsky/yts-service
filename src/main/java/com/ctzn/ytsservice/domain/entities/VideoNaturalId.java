@@ -19,8 +19,11 @@ public class VideoNaturalId {
     @EqualsAndHashCode.Include
     Long id;
 
-    @NaturalId
     @Column(length = 11, unique = true, updatable = false, nullable = false, columnDefinition = "CHAR(11)")
     String videoId;
+
+    public static VideoNaturalId newFromPublicId(String videoId) {
+        return new VideoNaturalId(null, videoId);
+    }
 
 }

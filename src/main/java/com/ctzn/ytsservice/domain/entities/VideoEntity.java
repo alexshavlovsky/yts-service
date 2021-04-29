@@ -27,7 +27,6 @@ public class VideoEntity extends Auditable {
     @OneToOne
     @MapsId
     @JoinColumn(name = "video_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     public VideoNaturalId naturalId;
 
     @ManyToOne(fetch = FetchType.LAZY)

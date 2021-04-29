@@ -6,6 +6,8 @@ import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.ChannelNaturalId;
 import com.ctzn.ytsservice.domain.entities.ContextStatus;
+import com.ctzn.ytsservice.infrastrucure.repositories.AuthorChannelRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.AuthorTextRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.ChannelNaturalIdRepository;
@@ -34,8 +36,10 @@ public class ChannelService {
     private WorkerLogService workerLogService;
     private SortColumnNamesAdapter sortColumnNamesAdapter;
     private ObjectAssembler objectAssembler;
+    private AuthorTextRepository authorTextRepository;
+    private AuthorChannelRepository authorChannelRepository;
 
-    public ChannelService(ChannelRepository channelRepository, ChannelNaturalIdRepository channelNaturalIdRepository, VideoRepository videoRepository, VideoNaturalIdRepository videoNaturalIdRepository, CommentNaturalIdRepository commentNaturalIdRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
+    public ChannelService(ChannelRepository channelRepository, ChannelNaturalIdRepository channelNaturalIdRepository, VideoRepository videoRepository, VideoNaturalIdRepository videoNaturalIdRepository, CommentNaturalIdRepository commentNaturalIdRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler, AuthorTextRepository authorTextRepository, AuthorChannelRepository authorChannelRepository) {
         this.channelRepository = channelRepository;
         this.channelNaturalIdRepository = channelNaturalIdRepository;
         this.videoRepository = videoRepository;
@@ -44,6 +48,8 @@ public class ChannelService {
         this.workerLogService = workerLogService;
         this.sortColumnNamesAdapter = sortColumnNamesAdapter;
         this.objectAssembler = objectAssembler;
+        this.authorTextRepository = authorTextRepository;
+        this.authorChannelRepository = authorChannelRepository;
     }
 
     public ChannelEntity createOrUpdateAndGet(ChannelDTO channelDTO, ContextStatusDTO contextStatusDTO) {
@@ -80,8 +86,7 @@ public class ChannelService {
         if (channelEntity == null) return null;
         ChannelDetailedResponse channel = objectAssembler.map(channelEntity, ChannelDetailedResponse.class);
         channel.setDoneVideoCount((int) videoRepository.countByChannel_naturalId_channelIdAndContextStatus_statusCode(channelId, StatusCode.DONE));
-        //int totalComments = (int) commentRepository.countByVideo_Channel_channelId(channelId); // join and count version (slower version)
-        Long totalComments = videoRepository.countComments(channelId); // aggregate version (faster version)
+        Long totalComments = videoRepository.countComments(channelId);
         return new ChannelSummaryResponse(channel, workerLogService.getByContextId(channelId),
                 totalComments == null ? 0 : totalComments.intValue());
     }
@@ -96,6 +101,8 @@ public class ChannelService {
         channelNaturalIdRepository.deleteOrphans();
         videoNaturalIdRepository.deleteOrphans();
         commentNaturalIdRepository.deleteOrphans();
+        authorTextRepository.deleteOrphans();
+        authorChannelRepository.deleteOrphans();
     }
 
     public ChannelEntity getById(String channelId) {

@@ -6,6 +6,8 @@ import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.ContextStatus;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import com.ctzn.ytsservice.domain.entities.VideoNaturalId;
+import com.ctzn.ytsservice.infrastrucure.repositories.AuthorChannelRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.AuthorTextRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.CommentNaturalIdRepository;
@@ -32,8 +34,10 @@ public class VideoService {
     private WorkerLogService workerLogService;
     private SortColumnNamesAdapter sortColumnNamesAdapter;
     private ObjectAssembler objectAssembler;
+    private AuthorTextRepository authorTextRepository;
+    private AuthorChannelRepository authorChannelRepository;
 
-    public VideoService(VideoRepository videoRepository, VideoNaturalIdRepository videoNaturalIdRepository, CommentNaturalIdRepository commentNaturalIdRepository, CommentRepository commentRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
+    public VideoService(VideoRepository videoRepository, VideoNaturalIdRepository videoNaturalIdRepository, CommentNaturalIdRepository commentNaturalIdRepository, CommentRepository commentRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler, AuthorTextRepository authorTextRepository, AuthorChannelRepository authorChannelRepository) {
         this.videoRepository = videoRepository;
         this.videoNaturalIdRepository = videoNaturalIdRepository;
         this.commentNaturalIdRepository = commentNaturalIdRepository;
@@ -41,6 +45,8 @@ public class VideoService {
         this.workerLogService = workerLogService;
         this.sortColumnNamesAdapter = sortColumnNamesAdapter;
         this.objectAssembler = objectAssembler;
+        this.authorTextRepository = authorTextRepository;
+        this.authorChannelRepository = authorChannelRepository;
     }
 
     public Page<VideoEntity> getVideos(String rawQuery, Pageable pageable, boolean optimize) {
@@ -103,6 +109,8 @@ public class VideoService {
         videoRepository.deleteByNaturalId_videoId(videoId);
         videoNaturalIdRepository.deleteOrphans();
         commentNaturalIdRepository.deleteOrphans();
+        authorTextRepository.deleteOrphans();
+        authorChannelRepository.deleteOrphans();
     }
 
 }

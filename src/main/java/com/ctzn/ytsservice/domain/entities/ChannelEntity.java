@@ -27,7 +27,6 @@ public class ChannelEntity extends Auditable {
     @OneToOne
     @MapsId
     @JoinColumn(name = "channel_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     public ChannelNaturalId naturalId;
 
     public String channelVanityName;

@@ -12,7 +12,7 @@ ALTER TABLE comments
 
 -- update a tsv column
 update comments
-set tsv = to_tsvector(coalesce(text, '') || ' ' || coalesce(author_text, ''));
+set tsv = to_tsvector(coalesce(text, ''));
 
 -- create an index
 CREATE INDEX comments_tsv_idx
@@ -23,7 +23,7 @@ CREATE INDEX comments_tsv_idx
 DROP FUNCTION IF EXISTS comments_tsv_trigger();
 CREATE FUNCTION comments_tsv_trigger() RETURNS trigger AS '
 begin
-    new.tsv := to_tsvector(coalesce(new.text, '''') || '' '' || coalesce(new.author_text, ''''));
+    new.tsv := to_tsvector(coalesce(new.text, ''''));
     return new;
 end;
 ' LANGUAGE plpgsql;
@@ -45,7 +45,7 @@ ALTER TABLE channels
 
 -- update a tsv column
 update channels
-set tsv = to_tsvector(coalesce(title, '') || ' ' || coalesce(channel_vanity_name, ''));
+set tsv = to_tsvector(coalesce(title, ''));
 
 -- create an index
 CREATE INDEX channels_tsv_idx
@@ -56,7 +56,7 @@ CREATE INDEX channels_tsv_idx
 DROP FUNCTION IF EXISTS channels_tsv_trigger();
 CREATE FUNCTION channels_tsv_trigger() RETURNS trigger AS '
 begin
-    new.tsv := to_tsvector(coalesce(new.title, '''') || '' '' || coalesce(new.channel_vanity_name, ''''));
+    new.tsv := to_tsvector(coalesce(new.title, ''''));
     return new;
 end;
 ' LANGUAGE plpgsql;

@@ -10,13 +10,12 @@ public class CommentResponse {
     public String videoId;
     public String videoTitle;
     public String authorText;
-    public String channelId;
+    public String authorChannelId;
     public String publishedTimeText;
     public Date publishedDate;
     public String text;
     public int likeCount;
     public int replyCount;
-    public String parentId;
     public Date createdDate;
     public Date lastUpdatedDate;
 }

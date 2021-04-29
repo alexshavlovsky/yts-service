@@ -7,9 +7,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -27,14 +25,22 @@ public class CommentEntity extends Auditable {
     @OneToOne
     @MapsId
     @JoinColumn(name = "comment_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     public CommentNaturalId naturalId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "video_id")
     public VideoEntity video;
-    public String authorText;
-    public String channelId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "author_text_id")
+    public AuthorTextEntity authorText;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_channel_id")
+    public AuthorChannelEntity authorChannel;
+
     public String publishedTimeText;
     public Date publishedDate;
     @Lob
@@ -42,18 +48,20 @@ public class CommentEntity extends Auditable {
     public String text;
     public int likeCount;
     public int replyCount;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    public CommentEntity parent;
-    @OneToMany(mappedBy = "parent")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    List<CommentEntity> replies;
 
     public String getCommentId() {
         CommentNaturalId nId = getNaturalId();
         return nId.getReplyId() == null ?
                 nId.getThreadId() :
                 nId.getThreadId() + '.' + nId.getReplyId();
+    }
+
+    public String getAuthorText() {
+        return authorText.getText();
+    }
+
+    public String getAuthorChannelId() {
+        return authorChannel.getChannelId();
     }
 
     public String getVideoId() {
@@ -64,24 +72,18 @@ public class CommentEntity extends Auditable {
         return video.getTitle();
     }
 
-    public String getParentId() {
-        return parent == null ? null : parent.getNaturalId().getThreadId();
-    }
-
-    public static CommentEntity fromCommentDTO(CommentNaturalId publicId, VideoEntity videoEntity, CommentEntity parentComment, CommentDTO dto) {
+    public static CommentEntity fromCommentDTO(CommentNaturalId publicId, VideoEntity videoEntity, AuthorTextEntity authorText, AuthorChannelEntity authorChannel, CommentDTO dto) {
         return new CommentEntity(
                 publicId.getId(),
                 publicId,
                 videoEntity,
-                dto.getAuthorText(),
-                dto.getChannelId(),
+                authorText,
+                authorChannel,
                 dto.getPublishedTimeText(),
                 dto.getPublishedDate(),
                 dto.getText(),
                 dto.getLikeCount(),
-                dto.getReplyCount(),
-                parentComment,
-                Collections.emptyList()
+                dto.getReplyCount()
         );
     }
 

@@ -6,14 +6,11 @@ import com.ctzn.ytsservice.application.service.ChannelService;
 import com.ctzn.ytsservice.application.service.CommentService;
 import com.ctzn.ytsservice.application.service.VideoService;
 import com.ctzn.ytsservice.domain.entities.*;
-import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.WorkerLogRepository;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,19 +44,6 @@ public class PersistenceServiceImpl implements PersistenceService {
         videoService.saveAll(videos);
     }
 
-
-    private Map<String, CommentEntity> getCommentMap(VideoEntity videoEntity, List<CommentDTO> comments) {
-        return comments.stream().map(comment -> commentService.createOrUpdateAndGet(comment, videoEntity, null))
-                .collect(LinkedHashMap::new, (map, comment) -> map.put(comment.getCommentId(), comment), Map::putAll);
-    }
-
-    private List<CommentEntity> getReplyList(VideoEntity videoEntity, List<CommentDTO> replies, Map<String, CommentEntity> commentEntityMap) {
-        return replies.stream().map(comment -> commentService.createOrUpdateAndGet(comment, videoEntity,
-                commentEntityMap.get(comment.getParentCommentId())))
-                .collect(Collectors.toList());
-    }
-
-
     @Override
     public void saveVideoComments(String videoId, List<CommentDTO> comments, List<CommentDTO> replies) {
         VideoEntity videoEntity = videoService.getById(videoId);
@@ -68,10 +52,10 @@ public class PersistenceServiceImpl implements PersistenceService {
             return;
         }
 
-        Map<String, CommentEntity> commentEntityMap = getCommentMap(videoEntity, comments);
-        commentService.saveAll(commentEntityMap.values());
+        List<CommentEntity> commentEntities = comments.stream().map(commentDTO -> commentService.createOrUpdateAndGet(commentDTO, videoEntity)).collect(Collectors.toList());
+        commentService.saveAll(commentEntities);
 
-        List<CommentEntity> replyEntities = getReplyList(videoEntity, replies, commentEntityMap);
+        List<CommentEntity> replyEntities = replies.stream().map(commentDTO -> commentService.createOrUpdateAndGet(commentDTO, videoEntity)).collect(Collectors.toList());
         commentService.saveAll(replyEntities);
     }
 

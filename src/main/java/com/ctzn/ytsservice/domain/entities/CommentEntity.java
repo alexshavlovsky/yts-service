@@ -7,8 +7,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,11 +17,19 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
-@Table(name = "comments", indexes = {@Index(columnList = "video_id,channelId,authorText"), @Index(columnList = "channelId,authorText"), @Index(columnList = "channelId")})
+@Table(name = "comments")
 public class CommentEntity extends Auditable {
+
     @Id
     @EqualsAndHashCode.Include
-    public String commentId;
+    public Long id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "comment_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public CommentNaturalId naturalId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_id")
     public VideoEntity video;
@@ -40,6 +49,13 @@ public class CommentEntity extends Auditable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     List<CommentEntity> replies;
 
+    public String getCommentId() {
+        CommentNaturalId nId = getNaturalId();
+        return nId.getReplyId() == null ?
+                nId.getThreadId() :
+                nId.getThreadId() + '.' + nId.getReplyId();
+    }
+
     public String getVideoId() {
         return video.getNaturalId().getVideoId();
     }
@@ -49,12 +65,13 @@ public class CommentEntity extends Auditable {
     }
 
     public String getParentId() {
-        return parent == null ? null : parent.getCommentId();
+        return parent == null ? null : parent.getNaturalId().getThreadId();
     }
 
-    public static CommentEntity fromCommentDTO(VideoEntity videoEntity, CommentEntity parentComment, CommentDTO dto) {
+    public static CommentEntity fromCommentDTO(CommentNaturalId publicId, VideoEntity videoEntity, CommentEntity parentComment, CommentDTO dto) {
         return new CommentEntity(
-                dto.getCommentId(),
+                publicId.getId(),
+                publicId,
                 videoEntity,
                 dto.getAuthorText(),
                 dto.getChannelId(),
@@ -66,16 +83,6 @@ public class CommentEntity extends Auditable {
                 parentComment,
                 Collections.emptyList()
         );
-    }
-
-    public static Map<String, CommentEntity> getCommentMap(VideoEntity videoEntity, List<CommentDTO> comments) {
-        return comments.stream().map(comment -> fromCommentDTO(videoEntity, null, comment))
-                .collect(LinkedHashMap::new, (map, comment) -> map.put(comment.getCommentId(), comment), Map::putAll);
-    }
-
-    public static List<CommentEntity> getReplyList(VideoEntity videoEntity, List<CommentDTO> replies, Map<String, CommentEntity> commentEntityMap) {
-        return replies.stream().map(comment -> fromCommentDTO(videoEntity, commentEntityMap.get(comment.parentCommentId), comment))
-                .collect(Collectors.toList());
     }
 
 }

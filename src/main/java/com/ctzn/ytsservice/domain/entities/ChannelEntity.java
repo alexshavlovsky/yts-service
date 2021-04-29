@@ -54,7 +54,7 @@ public class ChannelEntity extends Auditable {
 
     public static ChannelEntity fromChannelDTO(ChannelNaturalId publicId, ChannelDTO dto, ContextStatus contextStatus) {
         return new ChannelEntity(
-                null,
+                publicId.getId(),
                 publicId,
                 dto.getChannelVanityName(),
                 dto.getTitle(),
@@ -67,7 +67,7 @@ public class ChannelEntity extends Auditable {
 
     public static ChannelEntity newPendingChannel(ChannelNaturalId publicId) {
         return new ChannelEntity(
-                null,
+                publicId.getId(),
                 publicId,
                 null,
                 publicId.getChannelId(),

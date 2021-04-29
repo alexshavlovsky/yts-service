@@ -8,8 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Optional;
+
 @NoRepositoryBean
-public interface CommentRepository extends PagingAndSortingRepository<CommentEntity, String> {
+public interface CommentRepository extends PagingAndSortingRepository<CommentEntity, Long> {
+
+    Optional<CommentEntity> findByNaturalId_threadIdAndNaturalId_replyId(String threadId, String replyId);
 
     Page<CommentEntity> findAllByTextContainingIgnoreCase(String text, Pageable pageable);
 

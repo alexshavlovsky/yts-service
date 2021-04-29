@@ -6,10 +6,11 @@ import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.ChannelNaturalId;
 import com.ctzn.ytsservice.domain.entities.ContextStatus;
-import com.ctzn.ytsservice.infrastrucure.repositories.ChannelNaturalIdRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
-import com.ctzn.ytsservice.infrastrucure.repositories.VideoNaturalIdRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.ChannelNaturalIdRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.CommentNaturalIdRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.VideoNaturalIdRepository;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelDetailedResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelSummaryResponse;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
@@ -29,15 +30,17 @@ public class ChannelService {
     private ChannelNaturalIdRepository channelNaturalIdRepository;
     private VideoRepository videoRepository;
     private VideoNaturalIdRepository videoNaturalIdRepository;
+    private CommentNaturalIdRepository commentNaturalIdRepository;
     private WorkerLogService workerLogService;
     private SortColumnNamesAdapter sortColumnNamesAdapter;
     private ObjectAssembler objectAssembler;
 
-    public ChannelService(ChannelRepository channelRepository, ChannelNaturalIdRepository channelNaturalIdRepository, VideoRepository videoRepository, VideoNaturalIdRepository videoNaturalIdRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
+    public ChannelService(ChannelRepository channelRepository, ChannelNaturalIdRepository channelNaturalIdRepository, VideoRepository videoRepository, VideoNaturalIdRepository videoNaturalIdRepository, CommentNaturalIdRepository commentNaturalIdRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
         this.channelRepository = channelRepository;
         this.channelNaturalIdRepository = channelNaturalIdRepository;
         this.videoRepository = videoRepository;
         this.videoNaturalIdRepository = videoNaturalIdRepository;
+        this.commentNaturalIdRepository = commentNaturalIdRepository;
         this.workerLogService = workerLogService;
         this.sortColumnNamesAdapter = sortColumnNamesAdapter;
         this.objectAssembler = objectAssembler;
@@ -92,6 +95,7 @@ public class ChannelService {
         channelRepository.deleteByNaturalId_channelId(channelId);
         channelNaturalIdRepository.deleteOrphans();
         videoNaturalIdRepository.deleteOrphans();
+        commentNaturalIdRepository.deleteOrphans();
     }
 
     public ChannelEntity getById(String channelId) {

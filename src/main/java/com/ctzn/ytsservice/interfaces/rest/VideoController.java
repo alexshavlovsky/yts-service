@@ -12,6 +12,7 @@ import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,6 +53,10 @@ public class VideoController {
     @DeleteMapping("{videoId}")
     public ResponseEntity<VideoIdRequest> deleteVideo(@Valid VideoIdRequest dto) {
         String videoId = dto.getVideoId();
+        if (!videoService.isExistById(videoId)) {
+            log.warning("Video not fount: " + videoId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         log.info("Deleting a video: " + videoId);
         videoService.deleteById(videoId);
         log.info("Deleted a video: " + videoId);

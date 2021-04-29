@@ -8,6 +8,8 @@ import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import com.ctzn.ytsservice.domain.entities.VideoNaturalId;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.CommentNaturalIdRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.VideoNaturalIdRepository;
 import com.ctzn.ytsservice.interfaces.rest.dto.VideoDetailedResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.VideoSummaryResponse;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,13 +26,17 @@ import java.util.List;
 public class VideoService {
 
     private VideoRepository videoRepository;
+    private VideoNaturalIdRepository videoNaturalIdRepository;
+    private CommentNaturalIdRepository commentNaturalIdRepository;
     private CommentRepository commentRepository;
     private WorkerLogService workerLogService;
     private SortColumnNamesAdapter sortColumnNamesAdapter;
     private ObjectAssembler objectAssembler;
 
-    public VideoService(VideoRepository videoRepository, CommentRepository commentRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
+    public VideoService(VideoRepository videoRepository, VideoNaturalIdRepository videoNaturalIdRepository, CommentNaturalIdRepository commentNaturalIdRepository, CommentRepository commentRepository, WorkerLogService workerLogService, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler) {
         this.videoRepository = videoRepository;
+        this.videoNaturalIdRepository = videoNaturalIdRepository;
+        this.commentNaturalIdRepository = commentNaturalIdRepository;
         this.commentRepository = commentRepository;
         this.workerLogService = workerLogService;
         this.sortColumnNamesAdapter = sortColumnNamesAdapter;
@@ -75,7 +82,6 @@ public class VideoService {
         return new VideoSummaryResponse(video, workerLogService.getByContextId(videoId), (int) totalComments);
     }
 
-
     public void save(VideoEntity videoEntity) {
         videoRepository.save(videoEntity);
     }
@@ -92,8 +98,11 @@ public class VideoService {
         return getById(channelId) != null;
     }
 
+    @Transactional
     public void deleteById(String videoId) {
         videoRepository.deleteByNaturalId_videoId(videoId);
+        videoNaturalIdRepository.deleteOrphans();
+        commentNaturalIdRepository.deleteOrphans();
     }
 
 }

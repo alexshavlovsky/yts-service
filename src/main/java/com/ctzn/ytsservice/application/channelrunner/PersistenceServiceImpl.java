@@ -3,6 +3,7 @@ package com.ctzn.ytsservice.application.channelrunner;
 import com.ctzn.youtubescraper.core.persistence.PersistenceService;
 import com.ctzn.youtubescraper.core.persistence.dto.*;
 import com.ctzn.ytsservice.application.service.ChannelService;
+import com.ctzn.ytsservice.application.service.CommentService;
 import com.ctzn.ytsservice.application.service.VideoService;
 import com.ctzn.ytsservice.domain.entities.*;
 import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
@@ -10,6 +11,7 @@ import com.ctzn.ytsservice.infrastrucure.repositories.WorkerLogRepository;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,13 +22,13 @@ public class PersistenceServiceImpl implements PersistenceService {
 
     private final ChannelService channelService;
     private final VideoService videoService;
-    private final CommentRepository commentRepository;
+    private final CommentService commentService;
     private final WorkerLogRepository workerLogRepository;
 
-    public PersistenceServiceImpl(ChannelService channelService, VideoService videoService, CommentRepository commentRepository, WorkerLogRepository workerLogRepository) {
+    public PersistenceServiceImpl(ChannelService channelService, VideoService videoService, CommentService commentService, WorkerLogRepository workerLogRepository) {
         this.channelService = channelService;
         this.videoService = videoService;
-        this.commentRepository = commentRepository;
+        this.commentService = commentService;
         this.workerLogRepository = workerLogRepository;
     }
 
@@ -45,6 +47,19 @@ public class PersistenceServiceImpl implements PersistenceService {
         videoService.saveAll(videos);
     }
 
+
+    private Map<String, CommentEntity> getCommentMap(VideoEntity videoEntity, List<CommentDTO> comments) {
+        return comments.stream().map(comment -> commentService.createOrUpdateAndGet(comment, videoEntity, null))
+                .collect(LinkedHashMap::new, (map, comment) -> map.put(comment.getCommentId(), comment), Map::putAll);
+    }
+
+    private List<CommentEntity> getReplyList(VideoEntity videoEntity, List<CommentDTO> replies, Map<String, CommentEntity> commentEntityMap) {
+        return replies.stream().map(comment -> commentService.createOrUpdateAndGet(comment, videoEntity,
+                commentEntityMap.get(comment.getParentCommentId())))
+                .collect(Collectors.toList());
+    }
+
+
     @Override
     public void saveVideoComments(String videoId, List<CommentDTO> comments, List<CommentDTO> replies) {
         VideoEntity videoEntity = videoService.getById(videoId);
@@ -53,11 +68,11 @@ public class PersistenceServiceImpl implements PersistenceService {
             return;
         }
 
-        Map<String, CommentEntity> commentEntityMap = CommentEntity.getCommentMap(videoEntity, comments);
-        commentRepository.saveAll(commentEntityMap.values());
+        Map<String, CommentEntity> commentEntityMap = getCommentMap(videoEntity, comments);
+        commentService.saveAll(commentEntityMap.values());
 
-        List<CommentEntity> replyEntities = CommentEntity.getReplyList(videoEntity, replies, commentEntityMap);
-        commentRepository.saveAll(replyEntities);
+        List<CommentEntity> replyEntities = getReplyList(videoEntity, replies, commentEntityMap);
+        commentService.saveAll(replyEntities);
     }
 
     @Override

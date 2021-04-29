@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.infrastrucure.repositories;
+package com.ctzn.ytsservice.infrastrucure.repositories.naturalid;
 
 import com.ctzn.ytsservice.domain.entities.ChannelNaturalId;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
 package com.ctzn.ytsservice.interfaces.rest;
 
 
-import com.ctzn.ytsservice.infrastrucure.repositories.CommentRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.comment.CommentRepository;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.UserProjection;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;

@@ -7,6 +7,9 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +20,9 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @ToString(exclude = "videos")
-@Table(name = "channels")
+@Table(name = "channels", indexes = {
+        @Index(name = "channel_id_nat_id_fk_index", columnList = "channel_id")
+})
 public class ChannelEntity extends Auditable {
 
     @Id
@@ -38,6 +43,16 @@ public class ChannelEntity extends Auditable {
     public List<VideoEntity> videos;
     @Embedded
     ContextStatus contextStatus;
+
+    public String getChannelVanityName() {
+        if (channelVanityName == null) return "UNKNOWN";
+        try {
+            return URLDecoder.decode(channelVanityName, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return channelVanityName;
+        }
+    }
 
     public String getChannelId() {
         return naturalId.getChannelId();

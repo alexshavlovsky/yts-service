@@ -28,12 +28,13 @@ public class CommentNaturalId {
     public static CommentNaturalId newFromPublicId(String commentId) {
         int len = commentId.length();
         boolean isDotted = commentId.contains(".");
-        if (!isDotted && len == 26) return new CommentNaturalId(null, commentId, null);
-        if (isDotted && len == (26 + 22 + 1)) {
+        if (!isDotted && (len == 26 || len == 20)) return new CommentNaturalId(null, commentId, null);
+        if (isDotted && (len == (26 + 22 + 1) || len == (20 + 22 + 1))) {
             String[] els = commentId.split("\\.");
-            if ((els.length) == 2 && els[0].length() == 26) return new CommentNaturalId(null, els[0], els[1]);
+            if ((els.length) == 2 && (els[0].length() == 26 || els[0].length() == 20))
+                return new CommentNaturalId(null, els[0], els[1]);
         }
-        throw new IllegalArgumentException("Illegal comment Id");
+        throw new IllegalArgumentException("Invalid comment Id");
     }
 
 }

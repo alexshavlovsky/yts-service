@@ -1,15 +1,15 @@
-package com.ctzn.ytsservice.infrastrucure.repositories;
+package com.ctzn.ytsservice.infrastrucure.repositories.comment;
 
 import com.ctzn.ytsservice.domain.entities.AuthorChannelEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface AuthorChannelRepository extends JpaRepository<AuthorChannelEntity, Long> {
+public interface AuthorChannelRepository extends CrudRepository<AuthorChannelEntity, Long> {
 
     Optional<AuthorChannelEntity> findByChannelId(String channelId);
 

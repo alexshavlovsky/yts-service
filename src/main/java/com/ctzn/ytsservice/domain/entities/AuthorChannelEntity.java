@@ -19,6 +19,8 @@ public class AuthorChannelEntity {
     @EqualsAndHashCode.Include
     public Long id;
 
+    // TODO consider allowing null values
+    // sometimes youtube returns null channelId (for example if chanel is deleted but comments and author name are still accessible)
     @Column(length = 24, unique = true, updatable = false, nullable = false, columnDefinition = "CHAR(24)")
     String channelId;
 

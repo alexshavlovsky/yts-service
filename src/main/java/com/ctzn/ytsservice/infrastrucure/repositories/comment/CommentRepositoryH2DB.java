@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.infrastrucure.repositories;
+package com.ctzn.ytsservice.infrastrucure.repositories.comment;
 
 import com.ctzn.ytsservice.domain.entities.CommentEntity;
 import org.springframework.context.annotation.Profile;

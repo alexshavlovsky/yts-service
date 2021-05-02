@@ -9,12 +9,14 @@ import com.ctzn.youtubescraper.core.executor.CustomExecutorService;
 import com.ctzn.youtubescraper.core.persistence.dto.ChannelVideosDTO;
 import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.youtubescraper.core.persistence.dto.VideoDTO;
+import lombok.extern.java.Log;
 
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+@Log
 public class PersistenceChannelRunner implements Callable<Void> {
 
     private final String channelId;
@@ -64,6 +66,7 @@ public class PersistenceChannelRunner implements Callable<Void> {
             grabComments(videos);
             persistenceService.logChannel(channelId, StatusCode.DONE, "Videos processed: " + videos.size());
         } catch (Exception e) {
+            log.severe(e.getMessage());
             persistenceService.logChannel(channelId, StatusCode.ERROR, e.getMessage());
             throw e;
         }

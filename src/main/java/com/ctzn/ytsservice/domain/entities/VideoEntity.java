@@ -17,7 +17,10 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @ToString(exclude = "comments")
-@Table(name = "videos")
+@Table(name = "videos", indexes = {
+        @Index(name = "video_id_nat_id_fk_index", columnList = "video_id"),
+        @Index(name = "channel_id_channel_fk_index", columnList = "channel_id")
+})
 public class VideoEntity extends Auditable {
 
     @Id

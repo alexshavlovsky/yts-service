@@ -15,7 +15,12 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
-@Table(name = "comments")
+@Table(name = "comments", indexes = {
+        @Index(name = "comment_id_nat_id_fk_index", columnList = "comment_id"),
+        @Index(name = "video_id_video_fk_index", columnList = "video_id"),
+        @Index(name = "author_text_id_author_text_fk_index", columnList = "author_text_id"),
+        @Index(name = "author_channel_id_author_channel_fk_index", columnList = "author_channel_id"),
+})
 public class CommentEntity extends Auditable {
 
     @Id
@@ -33,7 +38,6 @@ public class CommentEntity extends Auditable {
     public VideoEntity video;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "author_text_id")
     public AuthorTextEntity authorText;
 

@@ -9,9 +9,12 @@ import com.ctzn.ytsservice.domain.entities.*;
 import com.ctzn.ytsservice.infrastrucure.repositories.WorkerLogRepository;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Log
@@ -30,6 +33,7 @@ public class PersistenceServiceImpl implements PersistenceService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveChannelVideos(ChannelVideosDTO channelVideos) {
         ContextStatusDTO contextStatusDTO = new ContextStatusDTO(StatusCode.PASSED_TO_WORKER,
                 String.format("Video metadata collected: %d of %d", channelVideos.getVideos().size(), channelVideos.getChannel().getVideoCount())
@@ -40,7 +44,8 @@ public class PersistenceServiceImpl implements PersistenceService {
         channelService.save(channelEntity);
 
         List<VideoEntity> videos = channelVideos.getVideos().stream()
-                .map(videoDTO -> videoService.createOrUpdateAndGet(videoDTO, channelEntity)).collect(Collectors.toList());
+                .map(videoDTO -> videoService.createOrUpdateAndGet(videoDTO, channelEntity))
+                .collect(Collectors.toList());
         videoService.saveAll(videos);
     }
 
@@ -51,12 +56,11 @@ public class PersistenceServiceImpl implements PersistenceService {
             log.warning("Can't save comments. The parent video doesn't exist: " + videoId);
             return;
         }
-
-        List<CommentEntity> commentEntities = comments.stream().map(commentDTO -> commentService.createOrUpdateAndGet(commentDTO, videoEntity)).collect(Collectors.toList());
-        commentService.saveAll(commentEntities);
-
-        List<CommentEntity> replyEntities = replies.stream().map(commentDTO -> commentService.createOrUpdateAndGet(commentDTO, videoEntity)).collect(Collectors.toList());
-        commentService.saveAll(replyEntities);
+        List<CommentEntity> entities =
+                Stream.concat(comments.stream(), replies.stream())
+                        .map(commentDTO -> commentService.createOrUpdateAndGet(commentDTO, videoEntity))
+                        .collect(Collectors.toList());
+        commentService.saveAll(entities);
     }
 
     @Override

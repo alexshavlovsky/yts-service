@@ -1,5 +1,6 @@
 package com.ctzn.ytsservice.interfaces.rest;
 
+import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.ytsservice.application.service.ChannelService;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelResponse;
@@ -53,6 +54,20 @@ public class ChannelController {
         channelService.newPendingChannel(channelId);
         log.info("Added a pending channel: " + channelId);
         return ResponseEntity.accepted().body(dto);
+    }
+
+    @PutMapping("")
+    public ResponseEntity<ChannelIdRequest> updateChannel(@RequestBody @Valid ChannelIdRequest dto) {
+        String channelId = dto.getChannelId();
+        ChannelEntity channelEntity = channelService.getById(channelId);
+        if (channelEntity == null) {
+            log.warning("Channel does not exist: " + channelId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        channelEntity.getContextStatus().setStatusCode(StatusCode.PENDING);
+        channelService.save(channelEntity);
+        log.info("Channel scheduled for update: " + channelId);
+        return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("{channelId}")

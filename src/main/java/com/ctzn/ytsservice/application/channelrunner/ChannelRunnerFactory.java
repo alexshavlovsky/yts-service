@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.application.channelrunner;
 
-import com.ctzn.youtubescraper.core.persistence.PersistenceChannelRunner;
+import com.ctzn.youtubescraper.core.persistence.PersistenceRunner;
 import com.ctzn.youtubescraper.core.persistence.PersistenceService;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +13,8 @@ public class ChannelRunnerFactory {
         this.persistenceService = persistenceService;
     }
 
-    public PersistenceChannelRunner newRunner(String channelId) {
-        return PersistenceChannelRunner.newBuilder(channelId, persistenceService).defaultExecutor().processAllChannelComments().build();
+    public PersistenceRunner newRunner(String channelId) {
+        return PersistenceRunner.newChannelRunnerBuilder(channelId, persistenceService).defaultExecutor().processAllComments().build();
     }
 
 }

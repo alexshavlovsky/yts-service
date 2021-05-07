@@ -6,30 +6,27 @@ import com.ctzn.youtubescraper.core.config.ExecutorCfg;
 import com.ctzn.youtubescraper.core.config.VideoIteratorCfg;
 
 import java.time.Duration;
+import java.util.List;
 
-public class PersistenceChannelRunnerStepBuilder {
+public class PersistenceRunnerStepBuilder {
 
-    private PersistenceChannelRunnerStepBuilder() {
+    private PersistenceRunnerStepBuilder() {
     }
 
-    public static ExecutorStep newBuilder(String channelId, PersistenceService persistenceService) {
-        return new Steps(channelId, persistenceService);
+    public static ExecutorStep newChannelRunnerBuilder(String channelId, PersistenceService persistenceService) {
+        return new ChannelSteps(channelId, persistenceService);
     }
 
-    private static class Steps implements ExecutorStep, CommentOrderStep, VideoIteratorStep, CommentIteratorStep, BuildStep {
+    public static ExecutorStep newVideoListRunnerBuilder(List<String> videoIds, PersistenceService persistenceService) {
+        return new VideoSteps(videoIds, persistenceService);
+    }
 
-        private final String channelId;
-        private final PersistenceService persistenceService;
+    private static abstract class Steps implements ExecutorStep, CommentOrderStep, VideoIteratorStep, CommentIteratorStep, BuildStep {
 
-        public Steps(String channelId, PersistenceService persistenceService) {
-            this.channelId = channelId;
-            this.persistenceService = persistenceService;
-        }
-
-        private final ExecutorCfg executorCfg = ExecutorCfg.newInstance();
-        private CommentOrderCfg commentOrderCfg = CommentOrderCfg.NEWEST_FIRST;
-        private final VideoIteratorCfg videoIteratorCfg = VideoIteratorCfg.newInstance();
-        private final CommentIteratorCfg commentIteratorCfg = CommentIteratorCfg.newInstance();
+        final ExecutorCfg executorCfg = ExecutorCfg.newInstance();
+        CommentOrderCfg commentOrderCfg = CommentOrderCfg.NEWEST_FIRST;
+        final VideoIteratorCfg videoIteratorCfg = VideoIteratorCfg.newInstance();
+        final CommentIteratorCfg commentIteratorCfg = CommentIteratorCfg.newInstance();
 
         @Override
         public CommentOrderStep defaultExecutor() {
@@ -64,7 +61,7 @@ public class PersistenceChannelRunnerStepBuilder {
         }
 
         @Override
-        public BuildStep processAllChannelComments() {
+        public BuildStep processAllComments() {
             return this;
         }
 
@@ -87,39 +84,48 @@ public class PersistenceChannelRunnerStepBuilder {
         }
 
         @Override
-        public BuildStep processAllComments() {
+        public BuildStep processWithNoLimits() {
             return this;
         }
 
+
         @Override
-        public String getChannelId() {
-            return channelId;
+        public abstract PersistenceRunner build();
+
+    }
+
+    private static class ChannelSteps extends Steps {
+
+        private final String channelId;
+        private final PersistenceService persistenceService;
+
+        public ChannelSteps(String channelId, PersistenceService persistenceService) {
+            this.channelId = channelId;
+            this.persistenceService = persistenceService;
         }
 
         @Override
-        public ExecutorCfg getExecutorCfg() {
-            return executorCfg;
-        }
-
-        @Override
-        public CommentOrderCfg getCommentOrderCfg() {
-            return commentOrderCfg;
-        }
-
-        @Override
-        public VideoIteratorCfg getVideoIteratorCfg() {
-            return videoIteratorCfg;
-        }
-
-        @Override
-        public CommentIteratorCfg getCommentIteratorCfg() {
-            return commentIteratorCfg;
-        }
-
-        @Override
-        public PersistenceChannelRunner build() {
+        public PersistenceRunner build() {
             return new PersistenceChannelRunner(channelId, persistenceService, executorCfg, commentOrderCfg, videoIteratorCfg, commentIteratorCfg);
         }
+
+    }
+
+    private static class VideoSteps extends Steps {
+
+        private final List<String> videoIds;
+        private final PersistenceService persistenceService;
+
+        public VideoSteps(List<String> videoIds, PersistenceService persistenceService) {
+            this.videoIds = videoIds;
+            this.persistenceService = persistenceService;
+        }
+
+        @Override
+        public PersistenceRunner build() {
+            return new PersistenceVideoListRunner(videoIds, persistenceService, executorCfg, commentOrderCfg, videoIteratorCfg, commentIteratorCfg);
+        }
+
     }
 
     public interface ExecutorStep {
@@ -138,7 +144,7 @@ public class PersistenceChannelRunnerStepBuilder {
 
         VideoIteratorStep newestCommentsFirst();
 
-        BuildStep processAllChannelComments();
+        BuildStep processAllComments();
 
     }
 
@@ -154,23 +160,13 @@ public class PersistenceChannelRunnerStepBuilder {
 
         BuildStep commentCountLimits(int commentCountPerVideoLimit, int replyThreadCountLimit);
 
-        BuildStep processAllComments();
+        BuildStep processWithNoLimits();
 
     }
 
     public interface BuildStep {
 
-        String getChannelId();
-
-        ExecutorCfg getExecutorCfg();
-
-        CommentOrderCfg getCommentOrderCfg();
-
-        VideoIteratorCfg getVideoIteratorCfg();
-
-        CommentIteratorCfg getCommentIteratorCfg();
-
-        PersistenceChannelRunner build();
+        PersistenceRunner build();
 
     }
 

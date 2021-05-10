@@ -13,7 +13,7 @@ import java.sql.Statement;
 @Component
 @Profile("postgres")
 @Log
-public class FtsInitializerPostgres {
+public class FtsInitializerPostgres implements FtsInitializer {
 
     private DataSource dataSource;
     private NativeSqlScriptExecutor nativeSqlScriptExecutor;

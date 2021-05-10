@@ -45,6 +45,7 @@ public class VideoEntity extends Auditable {
     @Embedded
     ContextStatus contextStatus;
     Integer totalCommentCount;
+    Integer workerId;
 
     public String getVideoId() {
         return naturalId.getVideoId();
@@ -73,6 +74,7 @@ public class VideoEntity extends Auditable {
                 dto.getViewCountText(),
                 Collections.emptyList(),
                 contextStatus,
+                null,
                 null
         );
     }

@@ -13,7 +13,7 @@ import java.sql.Statement;
 @Component
 @Profile("h2db")
 @Log
-public class FtsInitializerH2DB {
+public class FtsInitializerH2DB implements FtsInitializer {
 
     private DataSource dataSource;
     private NativeSqlScriptExecutor nativeSqlScriptExecutor;

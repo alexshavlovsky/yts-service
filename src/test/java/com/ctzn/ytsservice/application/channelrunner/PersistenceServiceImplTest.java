@@ -15,7 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles({"h2db", "h2mem"})
 @ExtendWith(SpringExtension.class)
 @Transactional
+@DirtiesContext
+@TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:h2:mem:${random.uuid}"
+})
 class PersistenceServiceImplTest {
 
     @Autowired

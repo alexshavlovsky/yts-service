@@ -6,10 +6,10 @@ import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.ChannelNaturalId;
 import com.ctzn.ytsservice.domain.entities.ContextStatus;
-import com.ctzn.ytsservice.infrastrucure.repositories.comment.AuthorChannelRepository;
-import com.ctzn.ytsservice.infrastrucure.repositories.comment.AuthorTextRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.comment.AuthorChannelRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.comment.AuthorTextRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.ChannelNaturalIdRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.CommentNaturalIdRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.VideoNaturalIdRepository;
@@ -21,9 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Component
 public class ChannelService {
@@ -118,8 +117,24 @@ public class ChannelService {
         channelRepository.save(channelEntity);
     }
 
-    public List<ChannelEntity> getPendingList() {
-        return channelRepository.findAllByContextStatus_StatusCodeOrderByCreatedDate(StatusCode.PENDING);
+    public boolean existOnePendingChannel() {
+        return channelRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING) != null;
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public ChannelEntity lockOnePendingChannel(Integer workerId) {
+        ChannelEntity channelEntity = channelRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING);
+        if (channelEntity == null) return null;
+        channelEntity.setWorkerId(workerId);
+        return channelRepository.save(channelEntity);
+    }
+
+    public boolean unlockChannel(Long id, int workerId) {
+        ChannelEntity channelEntity = channelRepository.findById(id).orElse(null);
+        if (channelEntity == null || channelEntity.getWorkerId() != workerId) return false;
+        channelEntity.setWorkerId(null);
+        channelRepository.save(channelEntity);
+        return true;
     }
 
 }

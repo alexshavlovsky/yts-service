@@ -4,9 +4,11 @@ import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,5 +28,11 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
 
     @Query("SELECT SUM(v.totalCommentCount) FROM VideoEntity v where v.channel.naturalId.channelId = ?1")
     Long countComments(String channelId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update videos set worker_id = null",
+            nativeQuery = true)
+    void resetLocks();
 
 }

@@ -43,6 +43,7 @@ public class ChannelEntity extends Auditable {
     public List<VideoEntity> videos;
     @Embedded
     ContextStatus contextStatus;
+    Integer workerId;
 
     public String getChannelVanityName() {
         if (channelVanityName == null) return "UNKNOWN";
@@ -75,7 +76,8 @@ public class ChannelEntity extends Auditable {
                 dto.getVideoCount(),
                 dto.getSubscriberCount(),
                 Collections.emptyList(),
-                contextStatus
+                contextStatus,
+                null
         );
     }
 
@@ -88,7 +90,8 @@ public class ChannelEntity extends Auditable {
                 null,
                 null,
                 Collections.emptyList(),
-                new ContextStatus(StatusCode.PENDING)
+                new ContextStatus(StatusCode.PENDING),
+                null
         );
     }
 

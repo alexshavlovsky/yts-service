@@ -4,17 +4,23 @@ import com.ctzn.youtubescraper.core.persistence.PersistenceRunner;
 import com.ctzn.youtubescraper.core.persistence.PersistenceService;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
-public class ChannelRunnerFactory {
+public class RunnerFactory {
 
     private final PersistenceService persistenceService;
 
-    public ChannelRunnerFactory(PersistenceService persistenceService) {
+    public RunnerFactory(PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
-    public PersistenceRunner newRunner(String channelId) {
+    public PersistenceRunner newChannelRunner(String channelId) {
         return PersistenceRunner.newChannelRunnerBuilder(channelId, persistenceService).defaultExecutor().processAllComments().build();
+    }
+
+    public PersistenceRunner newVideoListRunner(List<String> videoIds) {
+        return PersistenceRunner.newVideoListRunnerBuilder(videoIds, persistenceService).defaultExecutor().processAllComments().build();
     }
 
 }

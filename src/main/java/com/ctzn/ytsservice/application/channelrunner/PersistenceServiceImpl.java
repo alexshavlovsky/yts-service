@@ -57,7 +57,7 @@ public class PersistenceServiceImpl implements PersistenceService {
             return;
         }
         List<CommentEntity> entities =
-                Stream.concat(comments.stream(), replies.stream())
+                Stream.concat(comments.stream(), replies.stream()).filter(commentDTO -> commentDTO.channelId != null)
                         .map(commentDTO -> commentService.createOrUpdateAndGet(commentDTO, videoEntity))
                         .collect(Collectors.toList());
         commentService.saveAll(entities);

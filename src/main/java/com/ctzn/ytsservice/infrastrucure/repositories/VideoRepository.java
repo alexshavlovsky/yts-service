@@ -1,6 +1,7 @@
 package com.ctzn.ytsservice.infrastrucure.repositories;
 
 import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
+import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,5 +35,7 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
     @Query(value = "update videos set worker_id = null",
             nativeQuery = true)
     void resetLocks();
+
+    VideoEntity findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode statusCode);
 
 }

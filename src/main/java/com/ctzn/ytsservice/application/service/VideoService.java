@@ -6,10 +6,10 @@ import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.ContextStatus;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import com.ctzn.ytsservice.domain.entities.VideoNaturalId;
+import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.comment.AuthorChannelRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.comment.AuthorTextRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.comment.CommentRepository;
-import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.CommentNaturalIdRepository;
 import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.VideoNaturalIdRepository;
 import com.ctzn.ytsservice.interfaces.rest.dto.VideoDetailedResponse;
@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -111,6 +112,26 @@ public class VideoService {
         commentNaturalIdRepository.deleteOrphans();
         authorTextRepository.deleteOrphans();
         authorChannelRepository.deleteOrphans();
+    }
+
+    public boolean existOnePendingVideo() {
+        return videoRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING) != null;
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public VideoEntity lockOnePendingVideo(Integer workerId) {
+        VideoEntity videoEntity = videoRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING);
+        if (videoEntity == null) return null;
+        videoEntity.setWorkerId(workerId);
+        return videoRepository.save(videoEntity);
+    }
+
+    public boolean unlockVideo(Long id, int workerId) {
+        VideoEntity videoEntity = videoRepository.findById(id).orElse(null);
+        if (videoEntity == null || videoEntity.getWorkerId() != workerId) return false;
+        videoEntity.setWorkerId(null);
+        videoRepository.save(videoEntity);
+        return true;
     }
 
 }

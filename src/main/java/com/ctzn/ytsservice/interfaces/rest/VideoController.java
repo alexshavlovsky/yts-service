@@ -1,5 +1,6 @@
 package com.ctzn.ytsservice.interfaces.rest;
 
+import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.ytsservice.application.service.VideoService;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
@@ -14,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -48,6 +46,20 @@ public class VideoController {
         VideoSummaryResponse videoSummary = videoService.getVideoSummary(videoId);
         if (videoId == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok().body(videoSummary);
+    }
+
+    @PutMapping("")
+    public ResponseEntity<VideoIdRequest> updateVideo(@RequestBody @Valid VideoIdRequest dto) {
+        String videoId = dto.getVideoId();
+        VideoEntity videoEntity = videoService.getById(videoId);
+        if (videoEntity == null) {
+            log.warning("Video does not exist: " + videoId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        videoEntity.getContextStatus().setStatusCode(StatusCode.PENDING);
+        videoService.save(videoEntity);
+        log.info("Video scheduled for update: " + videoId);
+        return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("{videoId}")

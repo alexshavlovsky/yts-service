@@ -15,16 +15,19 @@ import org.springframework.stereotype.Service;
 @Profile("!disableScheduler")
 public class ChannelRunnerScheduler {
 
-    private final ChannelWorkerBinderTransactionWrapper programmaticTransactionService;
+    private final ChannelWorkerBinderTransactionWrapper channelWorkerBinderTransactionWrapper;
+    private final VideoListWorkerBinderTransactionWrapper videoListWorkerBinderTransactionWrapper;
 
-    public ChannelRunnerScheduler(ChannelWorkerBinderTransactionWrapper programmaticTransactionService) {
-        this.programmaticTransactionService = programmaticTransactionService;
+    public ChannelRunnerScheduler(ChannelWorkerBinderTransactionWrapper channelWorkerBinderTransactionWrapper, VideoListWorkerBinderTransactionWrapper videoListWorkerBinderTransactionWrapper) {
+        this.channelWorkerBinderTransactionWrapper = channelWorkerBinderTransactionWrapper;
+        this.videoListWorkerBinderTransactionWrapper = videoListWorkerBinderTransactionWrapper;
     }
 
     @Async
     @Scheduled(fixedRate = 10 * 1000)
     public void worker() {
-        programmaticTransactionService.bindPendingChannelToWorker((int) Thread.currentThread().getId());
+        channelWorkerBinderTransactionWrapper.bindPendingChannelToWorker((int) Thread.currentThread().getId());
+        videoListWorkerBinderTransactionWrapper.bindVideoToWorker((int) Thread.currentThread().getId());
     }
 
 }

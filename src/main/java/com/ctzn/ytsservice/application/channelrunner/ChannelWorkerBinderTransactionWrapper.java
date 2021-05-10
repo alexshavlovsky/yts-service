@@ -12,9 +12,9 @@ import java.util.Random;
 public class ChannelWorkerBinderTransactionWrapper {
 
     private final ChannelService channelService;
-    private final ChannelRunnerFactory commentRunnerFactory;
+    private final RunnerFactory commentRunnerFactory;
 
-    public ChannelWorkerBinderTransactionWrapper(ChannelService channelService, ChannelRunnerFactory commentRunnerFactory) {
+    public ChannelWorkerBinderTransactionWrapper(ChannelService channelService, RunnerFactory commentRunnerFactory) {
         this.channelService = channelService;
         this.commentRunnerFactory = commentRunnerFactory;
     }
@@ -42,7 +42,7 @@ public class ChannelWorkerBinderTransactionWrapper {
                 System.out.println("Emulation: Channel passed to worker: " + channelId);
                 Thread.sleep(sleepDuration);
                 System.out.println("Emulation: Unlock channel: " + channelId);
-            } else commentRunnerFactory.newRunner(channelId).call();
+            } else commentRunnerFactory.newChannelRunner(channelId).call();
         } catch (Exception e) {
             e.printStackTrace();
             log.severe(e::getMessage);

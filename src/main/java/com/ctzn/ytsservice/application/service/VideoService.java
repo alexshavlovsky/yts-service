@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -119,11 +120,19 @@ public class VideoService {
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public VideoEntity lockOnePendingVideo(Integer workerId) {
-        VideoEntity videoEntity = videoRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING);
-        if (videoEntity == null) return null;
-        videoEntity.setWorkerId(workerId);
-        return videoRepository.save(videoEntity);
+    public List<VideoEntity> lockPendingVideos(Integer workerId) {
+        List<VideoEntity> videoEntityList = videoRepository.findByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING);
+        if (videoEntityList.isEmpty()) return null;
+        videoEntityList.forEach(videoEntity -> videoEntity.setWorkerId(workerId));
+        List<VideoEntity> res = new ArrayList<>();
+        videoRepository.saveAll(videoEntityList).forEach(res::add);
+        return res;
+    }
+
+    public int unlockVideos(List<Long> ids, int workerId) {
+        int ok = 0;
+        for (Long id : ids) if (unlockVideo(id, workerId)) ok++;
+        return ok;
     }
 
     public boolean unlockVideo(Long id, int workerId) {

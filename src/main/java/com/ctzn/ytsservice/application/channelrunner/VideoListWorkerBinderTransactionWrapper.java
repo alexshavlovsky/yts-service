@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @Log
@@ -22,11 +23,11 @@ public class VideoListWorkerBinderTransactionWrapper {
 
     void bindVideoToWorker(Integer workerId) {
         if (!videoService.existOnePendingVideo()) return;
-        VideoEntity video = null;
+        List<VideoEntity> videos = null;
         int retryCount = 0;
         do {
             try {
-                video = videoService.lockOnePendingVideo(workerId);
+                videos = videoService.lockPendingVideos(workerId);
             } catch (Exception e) {
                 try {
                     Thread.sleep(retryCount * 100 + new Random().nextInt(100));
@@ -34,18 +35,20 @@ public class VideoListWorkerBinderTransactionWrapper {
                     Thread.currentThread().interrupt();
                 }
             }
-        } while (++retryCount < 3 && video == null);
-        if (video == null) return;
-        String videoId = video.getNaturalId().getVideoId();
-        log.info(String.format("Video passed to worker: {videoId = %s, workerId = %d}", videoId, workerId));
+        } while (++retryCount < 3 && videos == null);
+        if (videos == null) return;
+        List<String> videosIds = videos.stream().map(videoEntity -> videoEntity.getNaturalId().getVideoId()).collect(Collectors.toList());
+        List<Long> ids = videos.stream().map(VideoEntity::getId).collect(Collectors.toList());
+        log.info(String.format("Videos passed to worker: {videoCount = %s, workerId = %d}", videosIds.size(), workerId));
         try {
-            commentRunnerFactory.newVideoListRunner(List.of(videoId)).call();
+            commentRunnerFactory.newVideoListRunner(videosIds).call();
         } catch (Exception e) {
             e.printStackTrace();
             log.severe(e::getMessage);
         } finally {
-            if (!videoService.unlockVideo(video.getId(), workerId))
-                log.warning(String.format("Error while unlocking video {videoId = %s, workerId = %d}", videoId, workerId));
+            int unlockedCount = videoService.unlockVideos(ids, workerId);
+            if (unlockedCount != ids.size())
+                log.warning(String.format("Error while unlocking video {videoCount = %s, errorCount = %s, workerId = %d}", ids.size(), ids.size() - unlockedCount, workerId));
         }
     }
 

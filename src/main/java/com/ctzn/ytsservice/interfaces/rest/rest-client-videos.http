@@ -6,4 +6,17 @@ Accept: application/json
 GET {{api-url}}/videos/HhroyiYFmjc
 Accept: application/json
 
+### Delete a channel by Id
+DELETE {{api-url}}/videos/HhroyiYFmjc
+Accept: application/json
+
+### Schedule for update
+PUT {{api-url}}/videos/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "videoId": "HhroyiYFmjc"
+}
+
 ###

@@ -20,4 +20,13 @@ Accept: application/json
 GET {{api-url}}/channels/UCksTNgiRyQGwi2ODBie8HdA
 Accept: application/json
 
+### Schedule for update
+PUT {{api-url}}/channels/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "channelId": "UCksTNgiRyQGwi2ODBie8HdA"
+}
+
 ###

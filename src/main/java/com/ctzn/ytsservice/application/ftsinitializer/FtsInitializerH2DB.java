@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.application.ftsinitializer;
 
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.sql.Statement;
 
 @Component
 @Profile("h2db")
-@Log
+@Slf4j
 public class FtsInitializerH2DB implements FtsInitializer {
 
     private DataSource dataSource;
@@ -37,7 +37,7 @@ public class FtsInitializerH2DB implements FtsInitializer {
     public void runNativeSql() {
         if (!isTableIndexed("COMMENTS")) {
             String scriptPath = "full_text_init_h2db.sql";
-            log.info("Initialize H2DB full text search: " + scriptPath);
+            log.info("Initialize H2DB full text search: [scriptPath: {}]", scriptPath);
             nativeSqlScriptExecutor.runNativeSql(scriptPath);
         }
     }

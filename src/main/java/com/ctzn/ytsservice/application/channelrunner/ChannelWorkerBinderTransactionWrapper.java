@@ -2,13 +2,13 @@ package com.ctzn.ytsservice.application.channelrunner;
 
 import com.ctzn.ytsservice.application.service.ChannelService;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Service
-@Log
+@Slf4j
 public class ChannelWorkerBinderTransactionWrapper {
 
     private final ChannelService channelService;
@@ -36,7 +36,7 @@ public class ChannelWorkerBinderTransactionWrapper {
         } while (++retryCount < 3 && channel == null);
         if (channel == null) return;
         String channelId = channel.getNaturalId().getChannelId();
-        log.info(String.format("Pending channel passed to worker: {channelId = %s, workerId = %d}", channelId, workerId));
+        log.info("Pending channel passed to worker: [channelId: {}, workerId: {}]", channelId, workerId);
         try {
             if (emulationOnly) {
                 System.out.println("Emulation: Channel passed to worker: " + channelId);
@@ -44,11 +44,10 @@ public class ChannelWorkerBinderTransactionWrapper {
                 System.out.println("Emulation: Unlock channel: " + channelId);
             } else commentRunnerFactory.newChannelRunner(channelId).call();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.severe(e::getMessage);
+            log.error(e.getMessage(), e);
         } finally {
             if (!channelService.unlockChannel(channel.getId(), workerId))
-                log.warning(String.format("Error while unlocking channel {channelId = %s, workerId = %d}", channelId, workerId));
+                log.warn("Error while unlocking channel [channelId: {}, workerId: {}]", channelId, workerId);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.ctzn.ytsservice.application.ftsinitializer;
 
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.sql.Statement;
 
 @Component
 @Profile("postgres")
-@Log
+@Slf4j
 public class FtsInitializerPostgres implements FtsInitializer {
 
     private DataSource dataSource;
@@ -40,7 +40,7 @@ public class FtsInitializerPostgres implements FtsInitializer {
     public void runNativeSql() {
         if (!isColumnExists("comments", "tsv")) {
             String scriptPath = "full_text_init_postgres_no_weights.sql";
-            log.info("Initialize Postgres full text search: " + scriptPath);
+            log.info("Initialize Postgres full text search: [scriptPath: {}]", scriptPath);
             nativeSqlScriptExecutor.runNativeSql(scriptPath);
         }
     }

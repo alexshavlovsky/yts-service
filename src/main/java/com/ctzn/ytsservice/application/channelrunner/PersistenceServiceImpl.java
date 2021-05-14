@@ -7,7 +7,7 @@ import com.ctzn.ytsservice.application.service.CommentService;
 import com.ctzn.ytsservice.application.service.VideoService;
 import com.ctzn.ytsservice.domain.entities.*;
 import com.ctzn.ytsservice.infrastrucure.repositories.WorkerLogRepository;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-@Log
+@Slf4j
 public class PersistenceServiceImpl implements PersistenceService {
 
     private final ChannelService channelService;
@@ -53,7 +53,7 @@ public class PersistenceServiceImpl implements PersistenceService {
     public void saveVideoComments(String videoId, List<CommentDTO> comments, List<CommentDTO> replies) {
         VideoEntity videoEntity = videoService.getById(videoId);
         if (videoEntity == null) {
-            log.warning("Can't save comments. The parent video doesn't exist: " + videoId);
+            log.warn("Can't save comments. The parent video doesn't exist: [videoId: {}]", videoId);
             return;
         }
         List<CommentEntity> entities =
@@ -67,7 +67,7 @@ public class PersistenceServiceImpl implements PersistenceService {
     public void updateVideoTotalCommentCount(String videoId, int totalCommentCount) {
         VideoEntity videoEntity = videoService.getById(videoId);
         if (videoEntity == null) {
-            log.warning("Can't update total comment count The video doesn't exist: " + videoId);
+            log.warn("Can't update total comment count The video doesn't exist: [videoId: {}]", videoId);
             return;
         }
         videoEntity.setTotalCommentCount(totalCommentCount);
@@ -83,7 +83,7 @@ public class PersistenceServiceImpl implements PersistenceService {
     public void setChannelStatus(String channelId, ContextStatusDTO status) {
         ChannelEntity channelEntity = channelService.getById(channelId);
         if (channelEntity == null) {
-            log.warning("Can't set channel status. The channel doesn't exist: " + channelId);
+            log.warn("Can't set channel status. The channel doesn't exist:  [channelId: {}]", channelId);
             return;
         }
         channelEntity.setContextStatus(ContextStatus.fromContextStatusDTO(status));
@@ -94,7 +94,7 @@ public class PersistenceServiceImpl implements PersistenceService {
     public void setVideoStatus(String videoId, ContextStatusDTO status) {
         VideoEntity videoEntity = videoService.getById(videoId);
         if (videoEntity == null) {
-            log.warning("Can't save comments. The video doesn't exist: " + videoId);
+            log.warn("Can't save comments. The video doesn't exist: [videoId: {}]", videoId);
             return;
         }
         videoEntity.setContextStatus(ContextStatus.fromContextStatusDTO(status));

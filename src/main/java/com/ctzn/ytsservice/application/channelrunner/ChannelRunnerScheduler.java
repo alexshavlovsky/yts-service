@@ -1,6 +1,7 @@
 package com.ctzn.ytsservice.application.channelrunner;
 
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @EnableScheduling
 @EnableAsync
-@Log
+@Slf4j
 @Profile("!disableScheduler")
 public class ChannelRunnerScheduler {
 

@@ -6,9 +6,10 @@ import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelSummaryResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.ReadableResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.validation.ChannelIdRequest;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
-import lombok.extern.slf4j.Slf4j;
+import com.ctzn.ytsservice.interfaces.rest.transform.ResponseFormatter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +21,16 @@ import static com.ctzn.ytsservice.interfaces.rest.exception.ResourceException.*;
 
 @RestController
 @RequestMapping("/api/channels")
-@Slf4j
 public class ChannelController {
 
     private final ChannelService channelService;
     private final ObjectAssembler domainMapper;
+    private final ResponseFormatter responseFormatter;
 
-    public ChannelController(ChannelService channelService, ObjectAssembler domainMapper) {
+    public ChannelController(ChannelService channelService, ObjectAssembler domainMapper, ResponseFormatter responseFormatter) {
         this.channelService = channelService;
         this.domainMapper = domainMapper;
+        this.responseFormatter = responseFormatter;
     }
 
     @GetMapping()
@@ -46,16 +48,16 @@ public class ChannelController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ChannelIdRequest> addChannel(@RequestBody @Valid ChannelIdRequest dto) {
+    public ResponseEntity<ReadableResponse> addChannel(@RequestBody @Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
         if (channelService.isExistById(channelId)) throw channelExists(channelId);
         channelService.newPendingChannel(channelId);
-        log.info("Added a pending channel: {channelId={}}", channelId);
-        return ResponseEntity.accepted().body(dto);
+        return responseFormatter.getResponse(channelId,
+                "Channel scheduled: [channelId: {}]", channelId);
     }
 
     @PutMapping("")
-    public ResponseEntity<ChannelIdRequest> updateChannel(@RequestBody @Valid ChannelIdRequest dto) {
+    public ResponseEntity<ReadableResponse> updateChannel(@RequestBody @Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
         ChannelEntity channelEntity = channelService.getById(channelId);
         if (channelEntity == null) throw channelNotFound(channelId);
@@ -66,18 +68,17 @@ public class ChannelController {
         if (workerId != null) throw channelPassedToWorker(channelId, workerId);
         channelEntity.getContextStatus().setStatusCode(StatusCode.PENDING);
         channelService.save(channelEntity);
-        log.info("Channel scheduled for update: " + channelId);
-        return ResponseEntity.ok(dto);
+        return responseFormatter.getResponse(channelId,
+                "Channel scheduled for update:  [channelId: {}]", channelId);
     }
 
     @DeleteMapping("{channelId}")
-    public ResponseEntity<ChannelIdRequest> deleteChannel(@Valid ChannelIdRequest dto) {
+    public ResponseEntity<ReadableResponse> deleteChannel(@Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
         if (!channelService.isExistById(channelId)) throw channelNotFound(channelId);
-        log.info("Deleting a channel: {channelId={}}", channelId);
         channelService.deleteChannel(channelId);
-        log.info("Deleted a channel: {channelId={}}", channelId);
-        return ResponseEntity.ok().body(dto);
+        return responseFormatter.getResponse(channelId,
+                "Channel deleted: [channelId: {}]", channelId);
     }
 
 }

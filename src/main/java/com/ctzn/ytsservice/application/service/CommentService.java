@@ -5,6 +5,7 @@ import com.ctzn.ytsservice.domain.entities.CommentEntity;
 import com.ctzn.ytsservice.domain.entities.CommentNaturalId;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import com.ctzn.ytsservice.infrastrucure.repositories.comment.CommentRepository;
+import com.ctzn.ytsservice.infrastrucure.repositories.naturalid.CommentNaturalIdRepository;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
 import com.ctzn.ytsservice.interfaces.rest.transform.SortColumnNamesAdapter;
 import org.springframework.data.domain.Page;
@@ -16,12 +17,14 @@ import org.springframework.stereotype.Component;
 public class CommentService {
 
     private CommentRepository commentRepository;
+    private CommentNaturalIdRepository commentNaturalIdRepository;
     private SortColumnNamesAdapter sortColumnNamesAdapter;
     private ObjectAssembler objectAssembler;
     private CommentTransactionWrapper commentTransactionWrapper;
 
-    public CommentService(CommentRepository commentRepository, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler, CommentTransactionWrapper commentTransactionWrapper) {
+    public CommentService(CommentRepository commentRepository, CommentNaturalIdRepository commentNaturalIdRepository, SortColumnNamesAdapter sortColumnNamesAdapter, ObjectAssembler objectAssembler, CommentTransactionWrapper commentTransactionWrapper) {
         this.commentRepository = commentRepository;
+        this.commentNaturalIdRepository = commentNaturalIdRepository;
         this.sortColumnNamesAdapter = sortColumnNamesAdapter;
         this.objectAssembler = objectAssembler;
         this.commentTransactionWrapper = commentTransactionWrapper;
@@ -30,14 +33,15 @@ public class CommentService {
     public CommentEntity createOrUpdateAndGet(CommentDTO commentDTO, VideoEntity videoEntity) {
         String commentId = commentDTO.getCommentId();
         CommentNaturalId naturalId = CommentNaturalId.newFromPublicId(commentId);
-        CommentEntity persistentComment = commentRepository.findByNaturalId_threadIdAndNaturalId_replyId(
-                naturalId.getThreadId(), naturalId.getReplyId()).orElse(null);
-        if (persistentComment == null) {
-            return commentTransactionWrapper.createComment(naturalId, videoEntity, commentDTO);
-        } else {
-            objectAssembler.map(commentDTO, persistentComment);
-            return persistentComment;
+        CommentNaturalId foundId = commentNaturalIdRepository.findByThreadIdAndReplyId(naturalId.getThreadId(), naturalId.getReplyId()).orElse(null);
+        if (foundId != null) {
+            CommentEntity persistentComment = commentRepository.findById(foundId.getId()).orElse(null);
+            if (persistentComment != null) {
+                objectAssembler.map(commentDTO, persistentComment);
+                return persistentComment;
+            }
         }
+        return commentTransactionWrapper.createComment(naturalId, videoEntity, commentDTO);
     }
 
     public Page<CommentEntity> getComments(String rawQuery, Pageable pageable, boolean optimize) {

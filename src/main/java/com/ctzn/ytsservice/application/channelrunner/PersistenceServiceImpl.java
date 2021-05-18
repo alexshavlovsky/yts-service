@@ -56,11 +56,15 @@ public class PersistenceServiceImpl implements PersistenceService {
             log.warn("Can't save comments. The parent video doesn't exist: [videoId: {}]", videoId);
             return;
         }
+        long t0 = System.currentTimeMillis();
         List<CommentEntity> entities =
                 Stream.concat(comments.stream(), replies.stream()).filter(commentDTO -> commentDTO.channelId != null)
                         .map(commentDTO -> commentService.createOrUpdateAndGet(commentDTO, videoEntity))
                         .collect(Collectors.toList());
         commentService.saveAll(entities);
+        if (log.isDebugEnabled())
+            log.debug("PERSISTED [videoId: {}, comments/second: {}]",
+                    videoId, entities.size() * 1000 / (System.currentTimeMillis() - t0));
     }
 
     @Override

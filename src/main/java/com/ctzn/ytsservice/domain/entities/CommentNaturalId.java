@@ -11,7 +11,9 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "comment_ids",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"threadId", "replyId"})})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"threadId", "replyId"})
+//        indexes = @Index(name = "composite_id_index", columnList = "threadId,replyId")
+)
 public class CommentNaturalId {
 
     @Id

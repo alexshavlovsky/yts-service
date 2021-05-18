@@ -119,3 +119,64 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
 //        order by last_seen
 
 
+//    SELECT R_C.CHANNEL_ID AS authorChannelId,
+//        R_T.TEXT AS authorText,
+//        C.COMMENTED_VIDEO_COUNT AS commentedVideoCount,
+//        C.COMMENT_COUNT AS commentCount,
+//        C.LIKE_COUNT AS likeCount,
+//        C.REPLY_COUNT AS replyCount,
+//        C.FIRST_SEEN AS firstSeen,
+//        C.LAST_SEEN AS lastSeen
+//        FROM
+//        (SELECT AUTHOR_CHANNEL_ID,
+//        (ARRAY_AGG(DISTINCT(AUTHOR_TEXT_ID)))[1] AS AUTHOR_TEXT_ID,
+//        COUNT(DISTINCT(VIDEO_ID)) AS COMMENTED_VIDEO_COUNT,
+//        COUNT(1) AS COMMENT_COUNT,
+//        SUM(LIKE_COUNT) AS LIKE_COUNT,
+//        SUM(REPLY_COUNT) AS REPLY_COUNT,
+//        MIN(PUBLISHED_DATE) AS FIRST_SEEN,
+//        MAX(PUBLISHED_DATE) AS LAST_SEEN
+//        FROM COMMENTS
+//        GROUP BY (AUTHOR_CHANNEL_ID)) AS C
+//        JOIN AUTHOR_TEXTS AS R_T ON C.AUTHOR_TEXT_ID = R_T.ID
+//        JOIN AUTHOR_CHANNELS AS R_C ON C.AUTHOR_CHANNEL_ID = R_C.ID
+
+
+//    SELECT AUTHOR_CHANNEL_ID,
+//(ARRAY_AGG(DISTINCT(AUTHOR_TEXT_ID))) AS AUTHOR_TEXT_ID,
+//        COUNT(DISTINCT(VIDEO_ID)) AS COMMENTED_VIDEO_COUNT,
+//        COUNT(1) AS COMMENT_COUNT,
+//        SUM(LIKE_COUNT) AS LIKE_COUNT,
+//        SUM(REPLY_COUNT) AS REPLY_COUNT,
+//        MIN(PUBLISHED_DATE) AS FIRST_SEEN,
+//        MAX(PUBLISHED_DATE) AS LAST_SEEN,
+//        count(distinct(SELECT channel_id from videos as v where v.video_id = c.video_id)) as channels
+//        FROM COMMENTS as c
+//        GROUP BY (AUTHOR_CHANNEL_ID)
+
+
+//    SELECT AUTHOR_CHANNEL_ID,
+//(max(AUTHOR_TEXT_ID)) AS AUTHOR_TEXT_ID,
+//        COUNT(DISTINCT(VIDEO_ID)) AS COMMENTED_VIDEO_COUNT,
+//        COUNT(1) AS COMMENT_COUNT,
+//        SUM(LIKE_COUNT) AS LIKE_COUNT,
+//        SUM(REPLY_COUNT) AS REPLY_COUNT,
+//        MIN(PUBLISHED_DATE) AS FIRST_SEEN,
+//        MAX(PUBLISHED_DATE) AS LAST_SEEN,
+//        count(distinct(SELECT channel_id from videos as v where v.video_id = c.video_id)) as channels
+//        FROM COMMENTS as c
+//        GROUP BY (AUTHOR_CHANNEL_ID)
+
+//    SELECT AUTHOR_CHANNEL_ID,
+//(max(AUTHOR_TEXT_ID)) AS AUTHOR_TEXT_ID,
+//        COUNT(DISTINCT(VIDEO_ID)) AS COMMENTED_VIDEO_COUNT,
+//        COUNT(1) AS COMMENT_COUNT,
+//        SUM(LIKE_COUNT) AS LIKE_COUNT,
+//        SUM(REPLY_COUNT) AS REPLY_COUNT,
+//        MIN(PUBLISHED_DATE) AS FIRST_SEEN,
+//        MAX(PUBLISHED_DATE) AS LAST_SEEN,
+//        count(distinct(SELECT channel_id from videos as v where v.video_id = c.video_id)) as channels
+//        FROM COMMENTS as c
+//        GROUP BY (AUTHOR_CHANNEL_ID)
+//        having channels>1
+//        order by Like_count desc

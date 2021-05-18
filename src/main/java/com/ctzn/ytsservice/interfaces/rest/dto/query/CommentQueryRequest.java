@@ -14,10 +14,12 @@ public class CommentQueryRequest implements Predicateable<CommentEntity> {
 
     String text;
     String videoId;
+    String authorChannel;
 
     public Predicate[] toPredicates(CriteriaBuilder cb, Root<CommentEntity> root) {
         List<Predicate> predicates = new ArrayList<>();
         if (videoId != null) predicates.add(cb.equal(root.get("video").get("naturalId").get("videoId"), videoId));
+        if (authorChannel != null) predicates.add(cb.equal(root.get("authorChannel").get("channelId"), authorChannel));
         if (text != null) predicates.add(cb.like(cb.lower(root.get("text")), "%" + text.toLowerCase() + "%"));
         return predicates.toArray(Predicate[]::new);
     }

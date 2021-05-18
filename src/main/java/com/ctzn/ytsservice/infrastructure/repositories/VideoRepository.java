@@ -18,6 +18,8 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
 
     Optional<VideoEntity> findByNaturalId_videoId(String videoId);
 
+    List<VideoEntity> findAllByNaturalId_videoIdIn(List<String> videoIds);
+
     void deleteByNaturalId_videoId(String videoId);
 
     Page<VideoEntity> findAllByTitleContainingIgnoreCase(String title, Pageable pageable);

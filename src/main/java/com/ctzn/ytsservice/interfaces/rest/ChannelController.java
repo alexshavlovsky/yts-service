@@ -52,8 +52,7 @@ public class ChannelController {
         String channelId = dto.getChannelId();
         if (channelService.isExistById(channelId)) throw channelExists(channelId);
         channelService.newPendingChannel(channelId);
-        return responseFormatter.getResponse(channelId,
-                "Channel scheduled: [channelId: {}]", channelId);
+        return responseFormatter.getResponse(channelId, "Channel scheduled: [channelId: {}]", channelId);
     }
 
     @PutMapping("")
@@ -68,17 +67,16 @@ public class ChannelController {
         if (workerId != null) throw channelPassedToWorker(channelId, workerId);
         channelEntity.getContextStatus().setStatusCode(StatusCode.PENDING);
         channelService.save(channelEntity);
-        return responseFormatter.getResponse(channelId,
-                "Channel scheduled for update:  [channelId: {}]", channelId);
+        return responseFormatter.getResponse(channelId, "Channel scheduled for update:  [channelId: {}]", channelId);
     }
 
     @DeleteMapping("{channelId}")
     public ResponseEntity<ReadableResponse> deleteChannel(@Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
         if (!channelService.isExistById(channelId)) throw channelNotFound(channelId);
+        // TODO: set channel status LOCKED_FOR_DELETE before deletion
         channelService.deleteChannel(channelId);
-        return responseFormatter.getResponse(channelId,
-                "Channel deleted: [channelId: {}]", channelId);
+        return responseFormatter.getResponse(channelId, "Channel deleted: [channelId: {}]", channelId);
     }
 
 }

@@ -10,12 +10,15 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
 public interface ChannelRepository extends PagingAndSortingRepository<ChannelEntity, Long> {
 
     Optional<ChannelEntity> findByNaturalId_channelId(String channelId);
+
+    List<ChannelEntity> findAllByNaturalId_channelIdIn(List<String> channelIds);
 
     void deleteByNaturalId_channelId(String channelId);
 

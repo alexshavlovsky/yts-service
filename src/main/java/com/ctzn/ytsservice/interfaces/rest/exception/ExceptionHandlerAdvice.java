@@ -14,7 +14,7 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<ReadableResponse> handleException(ResourceException e) {
         log.warn(e.getMessage());
         return ResponseEntity.status(e.getHttpStatus()).body(
-                new ReadableResponse(null, e.getHttpStatus().toString(), e.getMessage()));
+                new ReadableResponse(e.getEntityId(), e.getHttpStatus().toString(), e.getMessage()));
     }
 
 }

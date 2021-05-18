@@ -3,7 +3,7 @@ GET {{api-url}}/users?page=0&size=10&sort=commentedVideoCount,desc
 Accept: application/json
 
 ### Get an user summary
-GET {{api-url}}/users/UCksTNgiRyQGwi2ODBie8HdA
+GET {{api-url}}/users/UCxhDggHkw4udGjZN5C3IAPw
 Accept: application/json
 
 ###

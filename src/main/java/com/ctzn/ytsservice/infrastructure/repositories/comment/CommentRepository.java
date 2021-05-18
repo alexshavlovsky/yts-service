@@ -80,20 +80,20 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
     Page<UserProjection> getUsers(String text, Pageable pageable);
 
     @Query(value = "" +
-            "    SELECT ATC.CHANNEL_ID AS authorChannelId,\n" +
-            "        ARRAY_AGG(DISTINCT ATX.TEXT) AS knownNames,\n" +
-            "        ARRAY_AGG(DISTINCT(SELECT chn.CHANNEL_ID FROM VIDEOS AS V join channel_ids as chn on chn.id = v.channel_id WHERE V.VIDEO_ID = C.VIDEO_ID)) AS commentedChannels,\n" +
-            "        ARRAY_AGG(DISTINCT(SELECT v_ids.video_ID FROM video_ids as v_ids WHERE v_ids.id = C.VIDEO_ID)) AS commentedVideos,\n" +
-            "        COUNT(1) AS commentCount,\n" +
-            "        SUM(LIKE_COUNT) AS likeCount,\n" +
-            "        SUM(REPLY_COUNT) AS replyCount,\n" +
-            "        MIN(PUBLISHED_DATE) AS firstSeen,\n" +
-            "        MAX(PUBLISHED_DATE) AS lastSeen\n" +
-            "        FROM COMMENTS AS C\n" +
-            "        JOIN AUTHOR_TEXTS AS ATX ON ATX.ID = AUTHOR_TEXT_ID\n" +
-            "        JOIN AUTHOR_CHANNELS AS ATC ON ATC.ID = AUTHOR_CHANNEL_ID\n" +
-            "        WHERE CHANNEL_ID = ?1\n" +
-            "        GROUP BY (ATC.CHANNEL_ID)"
+            "SELECT ATC.CHANNEL_ID AS authorChannelId,\n" +
+            "ARRAY_AGG(DISTINCT ATX.TEXT) AS knownNames,\n" +
+            "ARRAY_AGG(DISTINCT(SELECT chn.CHANNEL_ID FROM VIDEOS AS V join channel_ids as chn on chn.id = v.channel_id WHERE V.VIDEO_ID = C.VIDEO_ID)) AS commentedChannels,\n" +
+            "ARRAY_AGG(DISTINCT(SELECT v_ids.video_ID FROM video_ids as v_ids WHERE v_ids.id = C.VIDEO_ID)) AS commentedVideos,\n" +
+            "COUNT(1) AS commentCount,\n" +
+            "SUM(LIKE_COUNT) AS likeCount,\n" +
+            "SUM(REPLY_COUNT) AS replyCount,\n" +
+            "MIN(PUBLISHED_DATE) AS firstSeen,\n" +
+            "MAX(PUBLISHED_DATE) AS lastSeen\n" +
+            "FROM COMMENTS AS C\n" +
+            "JOIN AUTHOR_TEXTS AS ATX ON ATX.ID = AUTHOR_TEXT_ID\n" +
+            "JOIN AUTHOR_CHANNELS AS ATC ON ATC.ID = AUTHOR_CHANNEL_ID\n" +
+            "WHERE CHANNEL_ID = ?1\n" +
+            "GROUP BY (ATC.CHANNEL_ID)"
             , nativeQuery = true)
     UserSummaryProjection getUser(String userId);
 

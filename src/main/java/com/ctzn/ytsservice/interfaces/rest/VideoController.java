@@ -58,22 +58,21 @@ public class VideoController {
         if (videoEntity == null) throw videoNotFound(videoId);
         StatusCode statusCode = videoEntity.getContextStatus().getStatusCode();
         if (statusCode == StatusCode.PENDING) throw videoScheduled(videoId);
-        if (statusCode == StatusCode.LOCKED_FOR_DELETE) throw videoScheduled(videoId);
+        if (statusCode == StatusCode.LOCKED_FOR_DELETE) throw videoLockedForDelete(videoId);
         Integer workerId = videoEntity.getWorkerId();
         if (workerId != null) throw videoPassedToWorker(videoId, workerId);
         videoEntity.getContextStatus().setStatusCode(StatusCode.PENDING);
         videoService.save(videoEntity);
-        return responseFormatter.getResponse(videoId,
-                "Video scheduled for update: [videoId: {}]", videoId);
+        return responseFormatter.getResponse(videoId, "Video scheduled for update: [videoId: {}]", videoId);
     }
 
     @DeleteMapping("{videoId}")
     public ResponseEntity<ReadableResponse> deleteVideo(@Valid VideoIdRequest dto) {
         String videoId = dto.getVideoId();
         if (!videoService.isExistById(videoId)) throw videoNotFound(videoId);
+        // TODO: set video status LOCKED_FOR_DELETE before deletion
         videoService.deleteById(videoId);
-        return responseFormatter.getResponse(videoId,
-                "Video deleted: [videoId: {}]", videoId);
+        return responseFormatter.getResponse(videoId, "Video deleted: [videoId: {}]", videoId);
     }
 
 }

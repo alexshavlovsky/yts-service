@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.infrastrucure.repositories.comment;
+package com.ctzn.ytsservice.infrastructure.repositories.comment;
 
 import com.ctzn.ytsservice.domain.entities.AuthorChannelEntity;
 import org.springframework.data.jpa.repository.Modifying;

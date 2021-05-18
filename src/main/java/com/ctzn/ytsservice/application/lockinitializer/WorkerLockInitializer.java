@@ -2,8 +2,8 @@ package com.ctzn.ytsservice.application.lockinitializer;
 
 
 import com.ctzn.ytsservice.application.ftsinitializer.FtsInitializer;
-import com.ctzn.ytsservice.infrastrucure.repositories.ChannelRepository;
-import com.ctzn.ytsservice.infrastrucure.repositories.VideoRepository;
+import com.ctzn.ytsservice.infrastructure.repositories.ChannelRepository;
+import com.ctzn.ytsservice.infrastructure.repositories.VideoRepository;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.infrastrucure.repositories;
+package com.ctzn.ytsservice.infrastructure.repositories;
 
 import com.ctzn.ytsservice.domain.entities.WorkerLogEntity;
 import org.springframework.data.repository.CrudRepository;

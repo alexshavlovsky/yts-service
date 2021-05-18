@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.infrastrucure.repositories;
+package com.ctzn.ytsservice.infrastructure.repositories;
 
 import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
 import com.ctzn.ytsservice.domain.entities.ChannelEntity;

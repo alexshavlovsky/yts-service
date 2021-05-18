@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.infrastrucure.repositories.comment;
+package com.ctzn.ytsservice.infrastructure.repositories.comment;
 
 import com.ctzn.ytsservice.domain.entities.CommentEntity;
 import org.springframework.context.annotation.Profile;
@@ -9,11 +9,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile("h2db")
-public interface CommentRepositoryH2DB extends CommentRepository {
+@Profile("postgres")
+public interface CommentRepositoryPostgres extends CommentRepository {
 
-    @Query(value = "SELECT T.* FROM FT_SEARCH_DATA(:plain_query, 0, 0) FT, COMMENTS T WHERE FT.`TABLE`='COMMENTS' AND T.COMMENT_ID=FT.KEYS[1]",
-            countQuery = "SELECT COUNT(T.*) FROM FT_SEARCH_DATA(:plain_query, 0, 0) FT, COMMENTS T WHERE FT.`TABLE`='COMMENTS' AND T.COMMENT_ID=FT.KEYS[1]",
+    @Query(value = "select * from comments where tsv @@ plainto_tsquery(:plain_query)",
+            countQuery = "select count(*) from comments where tsv @@ plainto_tsquery(:plain_query)",
             nativeQuery = true)
     Page<CommentEntity> nativeFts(@Param("plain_query") String query, Pageable pageable);
 

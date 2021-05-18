@@ -2,8 +2,8 @@ package com.ctzn.ytsservice.application.service;
 
 import com.ctzn.youtubescraper.core.persistence.dto.CommentDTO;
 import com.ctzn.ytsservice.domain.entities.*;
-import com.ctzn.ytsservice.infrastrucure.repositories.comment.AuthorChannelRepository;
-import com.ctzn.ytsservice.infrastrucure.repositories.comment.AuthorTextRepository;
+import com.ctzn.ytsservice.infrastructure.repositories.comment.AuthorChannelRepository;
+import com.ctzn.ytsservice.infrastructure.repositories.comment.AuthorTextRepository;
 import org.springframework.stereotype.Service;
 
 @Service

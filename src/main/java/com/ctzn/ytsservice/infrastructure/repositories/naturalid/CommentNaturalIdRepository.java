@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.infrastrucure.repositories.naturalid;
+package com.ctzn.ytsservice.infrastructure.repositories.naturalid;
 
 import com.ctzn.ytsservice.domain.entities.CommentNaturalId;
 import org.springframework.data.jpa.repository.Modifying;

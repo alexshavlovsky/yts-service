@@ -6,7 +6,7 @@ import com.ctzn.ytsservice.application.service.ChannelService;
 import com.ctzn.ytsservice.application.service.CommentService;
 import com.ctzn.ytsservice.application.service.VideoService;
 import com.ctzn.ytsservice.domain.entities.*;
-import com.ctzn.ytsservice.infrastrucure.repositories.WorkerLogRepository;
+import com.ctzn.ytsservice.infrastructure.repositories.WorkerLogRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

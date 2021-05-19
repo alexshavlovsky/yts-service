@@ -27,7 +27,7 @@ public interface ChannelRepository extends PagingAndSortingRepository<ChannelEnt
     Page<ChannelEntity> nativeFts(String query, Pageable pageable);
 
     //    @EntityGraph(attributePaths = { "naturalId" })
-    ChannelEntity findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode statusCode);
+    ChannelEntity findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByLastUpdatedDate(StatusCode statusCode);
 
     @Modifying
     @Transactional

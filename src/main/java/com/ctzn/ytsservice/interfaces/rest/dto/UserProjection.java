@@ -5,6 +5,7 @@ import java.util.Date;
 public interface UserProjection {
     String getAuthorChannelId();
     String getAuthorText();
+    Long getCommentedChannelCount();
     Long getCommentedVideoCount();
     Long getCommentCount();
     Long getLikeCount();

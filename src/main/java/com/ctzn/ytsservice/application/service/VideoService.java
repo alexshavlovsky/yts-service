@@ -116,12 +116,12 @@ public class VideoService {
     }
 
     public boolean existOnePendingVideo() {
-        return videoRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING) != null;
+        return videoRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByLastUpdatedDate(StatusCode.PENDING) != null;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<VideoEntity> lockPendingVideos(Integer workerId) {
-        List<VideoEntity> videoEntityList = videoRepository.findByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING);
+        List<VideoEntity> videoEntityList = videoRepository.findByContextStatus_statusCodeAndWorkerIdIsNullOrderByLastUpdatedDate(StatusCode.PENDING);
         if (videoEntityList.isEmpty()) return null;
         videoEntityList.forEach(videoEntity -> videoEntity.setWorkerId(workerId));
         List<VideoEntity> res = new ArrayList<>();

@@ -1,8 +1,8 @@
 package com.ctzn.ytsservice.infrastructure.repositories.comment;
 
 import com.ctzn.ytsservice.domain.entities.CommentEntity;
-import com.ctzn.ytsservice.interfaces.rest.dto.UserSummaryProjection;
 import com.ctzn.ytsservice.interfaces.rest.dto.UserProjection;
+import com.ctzn.ytsservice.interfaces.rest.dto.UserSummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +25,7 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
     @Query(value = "" +
             "SELECT R_C.CHANNEL_ID AS authorChannelId,\n" +
             "R_T.TEXT AS authorText,\n" +
+            "C.COMMENTED_CHANNEL_COUNT AS commentedChannelCount,\n" +
             "C.COMMENTED_VIDEO_COUNT AS commentedVideoCount,\n" +
             "C.COMMENT_COUNT AS commentCount,\n" +
             "C.LIKE_COUNT AS likeCount,\n" +
@@ -33,14 +34,15 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
             "C.LAST_SEEN AS lastSeen\n" +
             "FROM\n" +
             "(SELECT AUTHOR_CHANNEL_ID,\n" +
-            "(ARRAY_AGG(DISTINCT(AUTHOR_TEXT_ID)))[1] AS AUTHOR_TEXT_ID,\n" +
+            "MAX(AUTHOR_TEXT_ID) AS AUTHOR_TEXT_ID,\n" +
+            "COUNT(DISTINCT(SELECT chn.CHANNEL_ID FROM VIDEOS AS V join channel_ids as chn on chn.id = v.channel_id WHERE V.VIDEO_ID = cin.VIDEO_ID)) AS COMMENTED_CHANNEL_COUNT,\n" +
             "COUNT(DISTINCT(VIDEO_ID)) AS COMMENTED_VIDEO_COUNT,\n" +
             "COUNT(1) AS COMMENT_COUNT,\n" +
             "SUM(LIKE_COUNT) AS LIKE_COUNT,\n" +
             "SUM(REPLY_COUNT) AS REPLY_COUNT,\n" +
             "MIN(PUBLISHED_DATE) AS FIRST_SEEN,\n" +
             "MAX(PUBLISHED_DATE) AS LAST_SEEN\n" +
-            "FROM COMMENTS\n" +
+            "FROM COMMENTS as cin\n" +
             "GROUP BY (AUTHOR_CHANNEL_ID)) AS C\n" +
             "JOIN AUTHOR_TEXTS AS R_T ON C.AUTHOR_TEXT_ID = R_T.ID\n" +
             "JOIN AUTHOR_CHANNELS AS R_C ON C.AUTHOR_CHANNEL_ID = R_C.ID\n"
@@ -51,6 +53,7 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
     @Query(value = "" +
             "SELECT R_C.CHANNEL_ID AS authorChannelId,\n" +
             "R_T.TEXT AS authorText,\n" +
+            "C.COMMENTED_CHANNEL_COUNT AS commentedChannelCount,\n" +
             "C.COMMENTED_VIDEO_COUNT AS commentedVideoCount,\n" +
             "C.COMMENT_COUNT AS commentCount,\n" +
             "C.LIKE_COUNT AS likeCount,\n" +
@@ -59,14 +62,15 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
             "C.LAST_SEEN AS lastSeen\n" +
             "FROM\n" +
             "(SELECT AUTHOR_CHANNEL_ID,\n" +
-            "(ARRAY_AGG(DISTINCT(AUTHOR_TEXT_ID)))[1] AS AUTHOR_TEXT_ID,\n" +
+            "MAX(AUTHOR_TEXT_ID) AS AUTHOR_TEXT_ID,\n" +
+            "COUNT(DISTINCT(SELECT chn.CHANNEL_ID FROM VIDEOS AS V join channel_ids as chn on chn.id = v.channel_id WHERE V.VIDEO_ID =  cin.VIDEO_ID)) AS COMMENTED_CHANNEL_COUNT,\n" +
             "COUNT(DISTINCT(VIDEO_ID)) AS COMMENTED_VIDEO_COUNT,\n" +
             "COUNT(1) AS COMMENT_COUNT,\n" +
             "SUM(LIKE_COUNT) AS LIKE_COUNT,\n" +
             "SUM(REPLY_COUNT) AS REPLY_COUNT,\n" +
             "MIN(PUBLISHED_DATE) AS FIRST_SEEN,\n" +
             "MAX(PUBLISHED_DATE) AS LAST_SEEN\n" +
-            "FROM COMMENTS\n" +
+            "FROM COMMENTS as cin\n" +
             "GROUP BY (AUTHOR_CHANNEL_ID)) AS C\n" +
             "JOIN AUTHOR_TEXTS AS R_T ON C.AUTHOR_TEXT_ID = R_T.ID\n" +
             "JOIN AUTHOR_CHANNELS AS R_C ON C.AUTHOR_CHANNEL_ID = R_C.ID\n" +

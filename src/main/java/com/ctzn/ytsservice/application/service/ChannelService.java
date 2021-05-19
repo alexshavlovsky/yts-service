@@ -118,12 +118,12 @@ public class ChannelService {
     }
 
     public boolean existOnePendingChannel() {
-        return channelRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING) != null;
+        return channelRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByLastUpdatedDate(StatusCode.PENDING) != null;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public ChannelEntity lockOnePendingChannel(Integer workerId) {
-        ChannelEntity channelEntity = channelRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode.PENDING);
+        ChannelEntity channelEntity = channelRepository.findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByLastUpdatedDate(StatusCode.PENDING);
         if (channelEntity == null) return null;
         channelEntity.setWorkerId(workerId);
         return channelRepository.save(channelEntity);

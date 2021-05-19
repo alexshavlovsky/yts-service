@@ -37,8 +37,8 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
             nativeQuery = true)
     void resetLocks();
 
-    VideoEntity findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode statusCode);
+    VideoEntity findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByLastUpdatedDate(StatusCode statusCode);
 
-    List<VideoEntity> findByContextStatus_statusCodeAndWorkerIdIsNullOrderByCreatedDate(StatusCode statusCode);
+    List<VideoEntity> findByContextStatus_statusCodeAndWorkerIdIsNullOrderByLastUpdatedDate(StatusCode statusCode);
 
 }

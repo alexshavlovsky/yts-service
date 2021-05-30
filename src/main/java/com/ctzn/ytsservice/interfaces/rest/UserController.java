@@ -10,6 +10,7 @@ import com.ctzn.ytsservice.interfaces.rest.dto.*;
 import com.ctzn.ytsservice.interfaces.rest.dto.validation.ChannelIdRequest;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,7 @@ public class UserController {
     }
 
     @GetMapping()
+    @Cacheable(value = "users")
     public ResponseEntity<PagedResponse<UserProjection>> getAll(@RequestParam(value = "text", required = false) String text, Pageable pageable) {
         Page<UserProjection> page = text == null ? commentRepository.getUsers(pageable) : commentRepository.getUsers(text, pageable);
         return ResponseEntity.ok().body(domainMapper.fromUserPageToPagedResponse(page));

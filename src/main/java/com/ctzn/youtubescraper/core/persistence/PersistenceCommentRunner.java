@@ -44,7 +44,7 @@ class PersistenceCommentRunner implements Runnable {
             persistenceService.logVideo(videoId, StatusCode.DONE,
                     String.format("total: %d of %d, comments: %d, replies: %d", cs + rs, totalCommentCount, cs, rs));
         } catch (Exception e) {
-            log.severe(e.getMessage());
+            log.severe("ERROR " + videoId + ' ' + e.getMessage());
             persistenceService.logVideo(videoId, StatusCode.ERROR, e.getMessage());
         }
     }

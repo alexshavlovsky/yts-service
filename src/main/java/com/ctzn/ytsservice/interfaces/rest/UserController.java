@@ -39,6 +39,7 @@ public class UserController {
     public ResponseEntity<UserSummaryResponse> getUserDetails(@Valid ChannelIdRequest dto) {
         String channelId = dto.getChannelId();
         UserSummaryProjection user = commentRepository.getUser(channelId);
+        List<UserCommonCommentedVideosProjection> commonCommentedVideos = commentRepository.getTop10CommonCommentedVideos(channelId);
         if (user == null) throw userNotFound(channelId);
         List<ChannelEntity> commentedChannels = channelRepository.findAllByNaturalId_channelIdIn(user.getCommentedChannels());
         List<VideoEntity> commentedVideos = videoRepository.findAllByNaturalId_videoIdIn(user.getCommentedVideos());
@@ -54,7 +55,8 @@ public class UserController {
                 user.getLikeCount(),
                 user.getReplyCount(),
                 user.getFirstSeen(),
-                user.getLastSeen()
+                user.getLastSeen(),
+                commonCommentedVideos
         );
         return ResponseEntity.ok().body(userSummaryResponse);
     }

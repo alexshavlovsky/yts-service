@@ -17,4 +17,5 @@ public class UserSummaryResponse {
     Long replyCount;
     Date firstSeen;
     Date lastSeen;
+    List<UserCommonCommentedVideosProjection> commonCommentedVideos;
 }

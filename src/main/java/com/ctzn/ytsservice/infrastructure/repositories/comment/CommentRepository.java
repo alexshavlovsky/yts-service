@@ -1,6 +1,7 @@
 package com.ctzn.ytsservice.infrastructure.repositories.comment;
 
 import com.ctzn.ytsservice.domain.entities.CommentEntity;
+import com.ctzn.ytsservice.interfaces.rest.dto.UserCommonCommentedVideosProjection;
 import com.ctzn.ytsservice.interfaces.rest.dto.UserProjection;
 import com.ctzn.ytsservice.interfaces.rest.dto.UserSummaryProjection;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
@@ -113,36 +115,30 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
             , nativeQuery = true)
     UserSummaryProjection getUser(String userId);
 
-}
+    @Query(value = "" +
+            "SELECT\n" +
+            "R_C.CHANNEL_ID AS authorChannelId,\n" +
+            "R_T.TEXT AS authorText,\n" +
+            "count(1) as videoCount ,\n" +
+            "array_agg(R_V.video_id) as videos\n" +
+            "FROM\n" +
+            "(SELECT cin.AUTHOR_CHANNEL_ID,\n" +
+            "cin.VIDEO_ID,\n" +
+            "MAX(cin.AUTHOR_TEXT_ID) AS AUTHOR_TEXT_ID,\n" +
+            "FROM COMMENTS as cin\n" +
+            "where video_id in (\n" +
+            "SELECT DISTINCT video_id FROM comments as c\n" +
+            "join author_channels as ac on c.author_channel_id = ac.id\n" +
+            "WHERE ac.channel_id = ?1\n" +
+            ") GROUP BY (AUTHOR_CHANNEL_ID, cin.VIDEO_ID)) as c\n" +
+            "JOIN AUTHOR_TEXTS AS R_T ON C.AUTHOR_TEXT_ID = R_T.ID\n" +
+            "JOIN AUTHOR_CHANNELS AS R_C ON C.AUTHOR_CHANNEL_ID = R_C.ID\n" +
+            "JOIN VIDEO_IDS R_V ON C.VIDEO_ID = R_V.ID\n" +
+            "where R_C.CHANNEL_ID != ?1\n" +
+            "GROUP BY (AUTHOR_CHANNEL_ID, AUTHOR_TEXT_ID)\n" +
+            "ORDER BY videoCount DESC\n" +
+            "LIMIT 10\n"
+            , nativeQuery = true)
+    List<UserCommonCommentedVideosProjection> getTop10CommonCommentedVideos(String userId);
 
-// users commented on the same videos
-//===================================
-//SELECT
-//        user_id,
-//        user_title,
-//    count(1) as commented_video_count,
-//    sum(comment_count) as comment_count,
-//    sum(like_count) as like_count,
-//    sum(reply_count) as reply_count
-//    from(
-//            SELECT
-//                    video_id,
-//            author_channel_id as user_id,
-//            max(author_text_id) as user_title,
-//    count(1) as comment_count,
-//    sum(like_count) as like_count,
-//    sum(reply_count) as reply_count
-//    FROM comments
-//    GROUP BY (video_id, author_channel_id)
-//)
-//        WHERE video_id in (
-//        SELECT DISTINCT
-//        video_id
-//        FROM
-//        comments as c
-//        join author_channels as ac on c.author_channel_id = ac.id
-//        WHERE ac.channel_id = 'UCcccccccccccccccccccccc'
-//        )
-//        GROUP BY user_id
-//        HAVING commented_video_count > 1
-//        ORDER BY commented_video_count DESC
+}

@@ -86,7 +86,7 @@ public class CommentItemSection {
                     publishedTimeText,
                     ParserUtil.parsePublishedTimeText(publishedTimeText),
                     r.contentText.toString(),
-                    r.likeCount,
+                    r.voteCount == null ? 0 : (int) ParserUtil.parseSubCount(r.voteCount.toString()),
                     r.replyCount,
                     parentCommentId
             );
@@ -120,7 +120,7 @@ public class CommentItemSection {
         public Text contentText;
         public Text publishedTimeText;
         public boolean isLiked;
-        public int likeCount;
+        //        public int likeCount;
         public String commentId;
         public boolean authorIsChannelOwner;
         public String voteStatus;

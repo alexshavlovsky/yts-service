@@ -124,7 +124,7 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
             "FROM\n" +
             "(SELECT cin.AUTHOR_CHANNEL_ID,\n" +
             "cin.VIDEO_ID,\n" +
-            "MAX(cin.AUTHOR_TEXT_ID) AS AUTHOR_TEXT_ID,\n" +
+            "MAX(cin.AUTHOR_TEXT_ID) AS AUTHOR_TEXT_ID\n" +
             "FROM COMMENTS as cin\n" +
             "where video_id in (\n" +
             "SELECT DISTINCT video_id FROM comments as c\n" +
@@ -135,7 +135,7 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
             "JOIN AUTHOR_CHANNELS AS R_C ON C.AUTHOR_CHANNEL_ID = R_C.ID\n" +
             "JOIN VIDEO_IDS R_V ON C.VIDEO_ID = R_V.ID\n" +
             "where R_C.CHANNEL_ID != ?1\n" +
-            "GROUP BY (AUTHOR_CHANNEL_ID, AUTHOR_TEXT_ID)\n" +
+            "GROUP BY (R_C.CHANNEL_ID, R_T.TEXT)\n" +
             "ORDER BY videoCount DESC\n" +
             "LIMIT 10\n"
             , nativeQuery = true)

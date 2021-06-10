@@ -116,29 +116,131 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
     UserSummaryProjection getUser(String userId);
 
     @Query(value = "" +
-            "SELECT\n" +
-            "R_C.CHANNEL_ID AS authorChannelId,\n" +
-            "R_T.TEXT AS authorText,\n" +
-            "count(1) as videoCount ,\n" +
-            "array_agg(R_V.video_id) as videos\n" +
-            "FROM\n" +
-            "(SELECT cin.AUTHOR_CHANNEL_ID,\n" +
-            "cin.VIDEO_ID,\n" +
-            "MAX(cin.AUTHOR_TEXT_ID) AS AUTHOR_TEXT_ID\n" +
-            "FROM COMMENTS as cin\n" +
-            "where video_id in (\n" +
-            "SELECT DISTINCT video_id FROM comments as c\n" +
-            "join author_channels as ac on c.author_channel_id = ac.id\n" +
-            "WHERE ac.channel_id = ?1\n" +
-            ") GROUP BY (AUTHOR_CHANNEL_ID, cin.VIDEO_ID)) as c\n" +
-            "JOIN AUTHOR_TEXTS AS R_T ON C.AUTHOR_TEXT_ID = R_T.ID\n" +
-            "JOIN AUTHOR_CHANNELS AS R_C ON C.AUTHOR_CHANNEL_ID = R_C.ID\n" +
-            "JOIN VIDEO_IDS R_V ON C.VIDEO_ID = R_V.ID\n" +
-            "where R_C.CHANNEL_ID != ?1\n" +
-            "GROUP BY (R_C.CHANNEL_ID, R_T.TEXT)\n" +
-            "ORDER BY videoCount DESC\n" +
-            "LIMIT 10\n"
+            "with posters as (\n" +
+            "    select repac.channel_id,\n" +
+            "           vids.video_id,\n" +
+            "           max(rep.AUTHOR_TEXT_ID) AUTHOR_TEXT_ID\n" +
+            "    from comments com,\n" +
+            "         comment_ids comids,\n" +
+            "         author_channels comac,\n" +
+            "         comments rep,\n" +
+            "         comment_ids repids,\n" +
+            "         author_channels repac,\n" +
+            "         video_ids vids\n" +
+            "    where com.comment_id = comids.id\n" +
+            "      and rep.comment_id = repids.id\n" +
+            "      and comids.thread_id = repids.thread_id\n" +
+            "      and comids.reply_id is null\n" +
+            "      and repids.reply_id is not null\n" +
+            "      and com.author_channel_id = comac.id\n" +
+            "      and rep.author_channel_id = repac.id\n" +
+            "      and com.video_id = vids.id\n" +
+            "      and comac.channel_id = ?1\n" +
+            "      and repac.channel_id != comac.channel_id\n" +
+            "    group by repac.channel_id, vids.video_id),\n" +
+            "     recipients as (\n" +
+            "         select comac.channel_id,\n" +
+            "                vids.video_id,\n" +
+            "                max(com.AUTHOR_TEXT_ID) AUTHOR_TEXT_ID\n" +
+            "         from comments com,\n" +
+            "              comment_ids comids,\n" +
+            "              author_channels comac,\n" +
+            "              comments rep,\n" +
+            "              comment_ids repids,\n" +
+            "              author_channels repac,\n" +
+            "              video_ids vids\n" +
+            "         where com.comment_id = comids.id\n" +
+            "           and rep.comment_id = repids.id\n" +
+            "           and comids.thread_id = repids.thread_id\n" +
+            "           and comids.reply_id is null\n" +
+            "           and repids.reply_id is not null\n" +
+            "           and com.author_channel_id = comac.id\n" +
+            "           and rep.author_channel_id = repac.id\n" +
+            "           and com.video_id = vids.id\n" +
+            "           and repac.channel_id = ?1\n" +
+            "           and repac.channel_id != comac.channel_id\n" +
+            "         group by comac.channel_id, vids.video_id),\n" +
+            "     same_thread as (\n" +
+            "         select distinct comac.CHANNEL_ID,\n" +
+            "                         vids.video_id,\n" +
+            "                         max(com.AUTHOR_TEXT_ID) AUTHOR_TEXT_ID\n" +
+            "         from comments com,\n" +
+            "              comment_ids comids,\n" +
+            "              author_channels comac,\n" +
+            "              video_ids vids\n" +
+            "         where com.comment_id = comids.id\n" +
+            "           and comids.reply_id is null\n" +
+            "           and com.author_channel_id = comac.id\n" +
+            "           and com.video_id = vids.id\n" +
+            "           and comac.CHANNEL_ID != ?1\n" +
+            "           and com.VIDEO_ID in (select distinct com.video_id\n" +
+            "                                from comments com,\n" +
+            "                                     comment_ids comids,\n" +
+            "                                     author_channels comac\n" +
+            "                                where com.comment_id = comids.id\n" +
+            "                                  and comids.reply_id is null\n" +
+            "                                  and com.author_channel_id = comac.id\n" +
+            "                                  and comac.channel_id = ?1)\n" +
+            "         group by (comac.CHANNEL_ID, vids.video_id)\n" +
+            "     ),\n" +
+            "     all_union as (\n" +
+            "         select *, 1 rp, 0 rr, 0 st\n" +
+            "         from posters\n" +
+            "         union\n" +
+            "         select *, 0 rp, 1 rr, 0 st\n" +
+            "         from recipients\n" +
+            "         union\n" +
+            "         select *, 0 rp, 0 rr, 1 st\n" +
+            "         from same_thread),\n" +
+            "     agg_no_author_texts as (\n" +
+            "         select CHANNEL_ID                                                       authorchannelid,\n" +
+            "                max(AUTHOR_TEXT_ID)                                              AUTHOR_TEXT_ID,\n" +
+            "                array_agg(distinct case when rp = 1 then VIDEO_ID else null end) reppostervideos,\n" +
+            "                array_agg(distinct case when rr = 1 then VIDEO_ID else null end) reprecipientvideos,\n" +
+            "                array_agg(distinct case when st = 1 then VIDEO_ID else null end) samethreadpostervideos\n" +
+            "         from all_union au\n" +
+            "         group by CHANNEL_ID\n" +
+            "         order by bit_or(rp) + bit_or(rr) + bit_or(st) desc, sum(rp + rr + st) desc\n" +
+            "         limit 10\n" +
+            "     )\n" +
+            "select authorchannelid,\n" +
+            "       at.TEXT as authortext,\n" +
+            "       reppostervideos,\n" +
+            "       reprecipientvideos,\n" +
+            "       samethreadpostervideos\n" +
+            "from agg_no_author_texts ant\n" +
+            "         join AUTHOR_TEXTS at on ant.AUTHOR_TEXT_ID = at.ID"
             , nativeQuery = true)
     List<UserCommonCommentedVideosProjection> getTop10CommonCommentedVideos(String userId);
 
 }
+
+
+// get comment intersection from user to user on video
+
+//select comids.THREAD_ID COMMENT_YT_ID,
+//       com.COMMENT_ID,
+//       array_agg(distinct comids.THREAD_ID||'.'||repids.reply_id) REP_YT_IDS,
+//       array_agg(distinct rep.COMMENT_ID) REP_IDS
+//from comments com,
+//     comment_ids comids,
+//     author_channels comac,
+//     comments rep,
+//     comment_ids repids,
+//     author_channels repac,
+//     video_ids vids
+//where com.comment_id = comids.id
+//  and rep.comment_id = repids.id
+//  and comids.thread_id = repids.thread_id
+//  and comids.reply_id is null
+//  and repids.reply_id is not null
+//  and com.author_channel_id = comac.id
+//  and rep.author_channel_id = repac.id
+//  and com.video_id = vids.id
+//  -- to user
+//  and comac.channel_id = 'xxxxx'
+//  -- from user
+//  and repac.channel_id = 'xxxx'
+//  -- on video
+//  and vids.video_id = 'xxxx'
+//group by comac.channel_id, repac.channel_id, vids.video_id, comids.THREAD_ID, com.COMMENT_ID

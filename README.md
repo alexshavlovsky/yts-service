@@ -45,3 +45,7 @@ Http client 	   | java.net.http.HttpClient, Brotli decoder
 <p align="center">
   <img src="screenshots/05_comment_search.png?raw=true"/>
 </p>
+
+<p align="center">
+  <img src="screenshots/06_author_summary.png?raw=true"/>
+</p>

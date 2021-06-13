@@ -9,4 +9,5 @@ public interface UserCommonCommentedVideosProjection {
     List<String> getRepPosterVideos();
     List<String> getRepRecipientVideos();
     List<String> getSameThreadPosterVideos();
+    List<String> getSameBranchPosterVideos();
 }

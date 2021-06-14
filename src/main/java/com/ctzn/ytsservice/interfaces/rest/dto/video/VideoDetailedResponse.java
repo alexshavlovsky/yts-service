@@ -1,5 +1,6 @@
-package com.ctzn.ytsservice.interfaces.rest.dto;
+package com.ctzn.ytsservice.interfaces.rest.dto.video;
 
+import com.ctzn.ytsservice.interfaces.rest.dto.ContextStatusResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

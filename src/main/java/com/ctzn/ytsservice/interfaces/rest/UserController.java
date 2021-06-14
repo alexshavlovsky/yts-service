@@ -8,6 +8,7 @@ import com.ctzn.ytsservice.infrastructure.repositories.VideoRepository;
 import com.ctzn.ytsservice.infrastructure.repositories.comment.CommentRepository;
 import com.ctzn.ytsservice.interfaces.rest.dto.*;
 import com.ctzn.ytsservice.interfaces.rest.dto.validation.ChannelIdRequest;
+import com.ctzn.ytsservice.interfaces.rest.dto.video.VideoResponse;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;

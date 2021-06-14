@@ -1,4 +1,4 @@
-package com.ctzn.ytsservice.interfaces.rest.dto;
+package com.ctzn.ytsservice.interfaces.rest.dto.video;
 
 import lombok.Data;
 

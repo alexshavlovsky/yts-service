@@ -12,8 +12,9 @@ import com.ctzn.ytsservice.infrastructure.repositories.comment.AuthorTextReposit
 import com.ctzn.ytsservice.infrastructure.repositories.comment.CommentRepository;
 import com.ctzn.ytsservice.infrastructure.repositories.naturalid.CommentNaturalIdRepository;
 import com.ctzn.ytsservice.infrastructure.repositories.naturalid.VideoNaturalIdRepository;
-import com.ctzn.ytsservice.interfaces.rest.dto.VideoDetailedResponse;
-import com.ctzn.ytsservice.interfaces.rest.dto.VideoSummaryResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.video.VideoDetailedResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.video.VideoStatProjection;
+import com.ctzn.ytsservice.interfaces.rest.dto.video.VideoSummaryResponse;
 import com.ctzn.ytsservice.interfaces.rest.transform.ObjectAssembler;
 import com.ctzn.ytsservice.interfaces.rest.transform.SortColumnNamesAdapter;
 import org.springframework.data.domain.Page;
@@ -86,8 +87,8 @@ public class VideoService {
         VideoEntity videoEntity = videoRepository.findByNaturalId_videoId(videoId).orElse(null);
         if (videoEntity == null) return null;
         VideoDetailedResponse video = objectAssembler.map(videoEntity, VideoDetailedResponse.class);
-        long totalComments = commentRepository.countByVideo_naturalId_videoId(videoId);
-        return new VideoSummaryResponse(video, workerLogService.getByContextId(videoId), (int) totalComments);
+        VideoStatProjection stat = commentRepository.getVideoStat(videoId);
+        return new VideoSummaryResponse(video, workerLogService.getByContextId(videoId), stat);
     }
 
     public void save(VideoEntity videoEntity) {

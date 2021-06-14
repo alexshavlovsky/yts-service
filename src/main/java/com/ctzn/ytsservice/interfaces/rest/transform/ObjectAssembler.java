@@ -7,7 +7,7 @@ import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import com.ctzn.ytsservice.interfaces.rest.dto.ChannelResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.CommentResponse;
 import com.ctzn.ytsservice.interfaces.rest.dto.PagedResponse;
-import com.ctzn.ytsservice.interfaces.rest.dto.VideoResponse;
+import com.ctzn.ytsservice.interfaces.rest.dto.video.VideoResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;

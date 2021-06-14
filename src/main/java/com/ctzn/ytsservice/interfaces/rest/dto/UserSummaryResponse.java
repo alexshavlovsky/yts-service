@@ -1,5 +1,6 @@
 package com.ctzn.ytsservice.interfaces.rest.dto;
 
+import com.ctzn.ytsservice.interfaces.rest.dto.video.VideoResponse;
 import lombok.Value;
 
 import java.util.Date;

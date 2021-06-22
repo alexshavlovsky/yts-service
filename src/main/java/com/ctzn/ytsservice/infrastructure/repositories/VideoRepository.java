@@ -1,6 +1,7 @@
 package com.ctzn.ytsservice.infrastructure.repositories;
 
 import com.ctzn.youtubescraper.core.persistence.dto.StatusCode;
+import com.ctzn.ytsservice.domain.entities.ChannelEntity;
 import com.ctzn.ytsservice.domain.entities.VideoEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,8 @@ public interface VideoRepository extends PagingAndSortingRepository<VideoEntity,
     Page<VideoEntity> nativeFts(String query, Pageable pageable);
 
     long countByChannel_naturalId_channelIdAndContextStatus_statusCode(String channelId, StatusCode statusCode);
+
+    List<VideoEntity> findAllByContextStatus_statusCode(StatusCode statusCode);
 
     @Query("SELECT SUM(v.totalCommentCount) FROM VideoEntity v where v.channel.naturalId.channelId = ?1")
     Long countComments(String channelId);

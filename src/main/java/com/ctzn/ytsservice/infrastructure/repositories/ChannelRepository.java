@@ -29,6 +29,8 @@ public interface ChannelRepository extends PagingAndSortingRepository<ChannelEnt
     //    @EntityGraph(attributePaths = { "naturalId" })
     ChannelEntity findTop1ByContextStatus_statusCodeAndWorkerIdIsNullOrderByLastUpdatedDate(StatusCode statusCode);
 
+    List<ChannelEntity> findAllByContextStatus_statusCode(StatusCode statusCode);
+
     @Modifying
     @Transactional
     @Query(value = "update channels set worker_id = null",

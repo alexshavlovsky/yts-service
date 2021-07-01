@@ -81,7 +81,7 @@ public class ChannelEntity extends Auditable {
         );
     }
 
-    public static ChannelEntity newPendingChannel(ChannelNaturalId publicId) {
+    public static ChannelEntity newPendingChannel(ChannelNaturalId publicId, String status) {
         return new ChannelEntity(
                 publicId.getId(),
                 publicId,
@@ -90,7 +90,7 @@ public class ChannelEntity extends Auditable {
                 null,
                 null,
                 Collections.emptyList(),
-                new ContextStatus(StatusCode.PENDING),
+                new ContextStatus(StatusCode.PENDING, status),
                 null
         );
     }

@@ -42,8 +42,8 @@ class ChannelRunnerSchedulerConcurrentTest {
     void testChannelVideosPersistence() throws InterruptedException {
         String channelId1 = "chId01__________________";
         String channelId2 = "chId02__________________";
-        channelService.newPendingChannel(channelId1);
-        channelService.newPendingChannel(channelId2);
+        channelService.newPendingChannel(channelId1, null);
+        channelService.newPendingChannel(channelId2, null);
         ChannelEntity channelEntity1 = channelService.getById(channelId1);
         ChannelEntity channelEntity2 = channelService.getById(channelId2);
         assertEquals(StatusCode.PENDING, channelEntity1.getContextStatus().getStatusCode());

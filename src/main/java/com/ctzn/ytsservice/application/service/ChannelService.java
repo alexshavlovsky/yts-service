@@ -112,8 +112,8 @@ public class ChannelService {
         return getById(channelId) != null;
     }
 
-    public void newPendingChannel(String channelId) {
-        ChannelEntity channelEntity = ChannelEntity.newPendingChannel(ChannelNaturalId.newFromPublicId(channelId));
+    public void newPendingChannel(String channelId, String runnerConfig) {
+        ChannelEntity channelEntity = ChannelEntity.newPendingChannel(ChannelNaturalId.newFromPublicId(channelId), runnerConfig);
         channelRepository.save(channelEntity);
     }
 

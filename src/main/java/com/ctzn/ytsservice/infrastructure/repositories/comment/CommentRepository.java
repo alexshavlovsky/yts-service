@@ -25,7 +25,7 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
     Page<CommentEntity> nativeFts(String query, Pageable pageable);
 
     @Query(
-            value = "" +
+            value = "(" +
                     "select count(1) as                                         totalCommentCount,\n" +
                     "       count(case when cid.REPLY_ID is null then true end) replyCount,\n" +
                     "       count(distinct AUTHOR_CHANNEL_ID)                   uniqueAuthorsCount\n" +
@@ -35,7 +35,13 @@ public interface CommentRepository extends PagingAndSortingRepository<CommentEnt
                     "where c.VIDEO_ID = vids.ID\n" +
                     "  and c.COMMENT_ID = cid.ID\n" +
                     "  and vids.VIDEO_ID = ?1\n" +
-                    "group by vids.id", nativeQuery = true
+                    "group by vids.id)" +
+                    "union (\n" +
+                    "select\n" +
+                    "0 totalCommentCount,\n" +
+                    "0 replyCount,\n" +
+                    "0 uniqueAuthorsCount\n" +
+                    ") order by totalCommentCount desc limit 1\n", nativeQuery = true
     )
     VideoStatProjection getVideoStat(String videoId);
 

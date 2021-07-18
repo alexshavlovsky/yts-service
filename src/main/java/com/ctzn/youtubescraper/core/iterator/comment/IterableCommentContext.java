@@ -1,7 +1,6 @@
 package com.ctzn.youtubescraper.core.iterator.comment;
 
 import com.ctzn.youtubescraper.core.exception.ScraperException;
-import com.ctzn.youtubescraper.core.exception.ScrapperInterruptedException;
 import com.ctzn.youtubescraper.core.model.comments.CommentItemSection;
 import com.ctzn.youtubescraper.core.model.commons.NextContinuationData;
 

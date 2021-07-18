@@ -4,24 +4,23 @@ import com.ctzn.youtubescraper.core.exception.ScraperHttpException;
 import com.ctzn.youtubescraper.core.exception.ScraperParserException;
 import com.ctzn.youtubescraper.core.exception.ScrapperInterruptedException;
 import com.ctzn.youtubescraper.core.http.useragent.UserAgentFactory;
-import com.ctzn.youtubescraper.core.model.comments.ApiResponse;
-import com.ctzn.youtubescraper.core.model.comments.CommentApiResponse;
+import com.ctzn.youtubescraper.core.model.browsev1.V1ApiRequest;
 import com.ctzn.youtubescraper.core.model.comments.CommentItemSection;
-import com.ctzn.youtubescraper.core.model.comments.ReplyApiResponse;
+import com.ctzn.youtubescraper.core.model.commentsv1next.NextApiResponse;
 import com.ctzn.youtubescraper.core.model.commons.NextContinuationData;
 import com.ctzn.youtubescraper.core.parser.CommentApiResponseParser;
+import com.ctzn.youtubescraper.core.parser.json.JsonMapper;
 import lombok.extern.java.Log;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Map;
 
 import static com.ctzn.youtubescraper.core.http.IoUtil.*;
 
 @Log
-public class YoutubeVideoCommentsClient extends AbstractYoutubeClient<CommentItemSection> {
+public class YoutubeVideoCommentsClient extends GenericYoutubeV1Client<CommentItemSection> {
 
     private static final CommentApiResponseParser commentApiResponseParser = new CommentApiResponseParser();
 
@@ -37,36 +36,32 @@ public class YoutubeVideoCommentsClient extends AbstractYoutubeClient<CommentIte
         if (!initialData.hasContinuation()) throw new ScraperParserException("Initial comment continuation not found");
     }
 
-    public CommentItemSection requestNextCommentSection(NextContinuationData continuationData, RequestUriLengthLimiter limiter) throws ScraperHttpException, ScraperParserException, ScrapperInterruptedException {
-        URI requestUri = uriFactory.newCommentApiRequestUri(continuationData);
-        return requestNextSection(requestUri, limiter, CommentApiResponse.class);
+    public NextApiResponse requestNextCommentSection(NextContinuationData continuationData, RequestUriLengthLimiter limiter) throws ScraperHttpException, ScraperParserException, ScrapperInterruptedException {
+        return requestNextSection(continuationData);
     }
 
-    public CommentItemSection requestNextReplySection(NextContinuationData continuationData, RequestUriLengthLimiter limiter) throws ScraperHttpException, ScraperParserException, ScrapperInterruptedException {
-        URI requestUri = uriFactory.newReplyApiRequestUri(continuationData);
-        return requestNextSection(requestUri, limiter, ReplyApiResponse.class);
+    public NextApiResponse requestNextReplySection(NextContinuationData continuationData, RequestUriLengthLimiter limiter) throws ScraperHttpException, ScraperParserException, ScrapperInterruptedException {
+        return requestNextSection(continuationData);
     }
 
-    private <T extends ApiResponse> CommentItemSection requestNextSection(URI requestUri, RequestUriLengthLimiter limiter, Class<T> valueType) throws ScraperHttpException, ScraperParserException, ScrapperInterruptedException {
-        limiter.setUriLength(requestUri.toString().length());
-        if (limiter.getUriLengthLimitUsagePercent() > 100) {
-            log.info("LIMIT " + videoId + " Request entity size limit is exceeded: no further processing of the section is possible");
-            return new CommentItemSection();
-        }
+    private NextApiResponse requestNextSection(NextContinuationData continuationData) throws ScraperHttpException, ScraperParserException, ScrapperInterruptedException {
 
-        HttpRequest request = newApiRequestBuilder(requestUri)
-                .headers("Content-Type", "application/x-www-form-urlencoded")
-                .headers("Origin", "https://www.youtube.com")
-                .POST(ofFormData(Map.of(youtubeCfg.getXsrfFieldName(), currentXsrfToken))).build();
+        URI requestUri = uriFactory.newNextApiV1RequestUri(youtubeCfg);
+
+        V1ApiRequest requestModel = new V1ApiRequest(clientCtx, continuationData.getContinuation());
+        String requestBody = JsonMapper.asJson(requestModel);
+
+        HttpRequest request = newV1ApiRequestBuilder(requestUri)
+                .headers("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody)).build();
 
         HttpResponse<InputStream> response = completeRequest(httpClient, request);
 
         String body = readStreamToString(applyBrotliDecoderAndGetBody(response));
-        T commentApiResponse = commentApiResponseParser.parseResponseBody(body, valueType);
 
-        currentXsrfToken = commentApiResponse.getToken();
+        NextApiResponse nextApiResponse = JsonMapper.parse(body, NextApiResponse.class);
 
-        return commentApiResponse.getItemSection();
+        return nextApiResponse;
     }
 
     public String getVideoId() {
